@@ -2,7 +2,9 @@
 // prop / context — for now these defaults match the web SDK's light theme.)
 export const colors = {
   accent: "#45b0ee",
-  accentInk: "#ffffff",
+  // Ink on top of `accent`. Dark, not white: white on this light blue is only
+  // ~2.4:1, well under the 4.5:1 contrast floor for the badge's small bold text.
+  accentInk: "#04121e",
   bg: "#ffffff",
   bgHover: "#f4f6f9",
   text: "#1a1d23",

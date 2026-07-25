@@ -1,6 +1,6 @@
 {
   "name": "@elaanio/react-native",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "React Native components + hooks for Elaan: notification inbox, preferences, and push device-token registration.",
   "type": "module",
   "main": "./dist/index.cjs",

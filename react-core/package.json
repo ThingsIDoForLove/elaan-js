@@ -1,6 +1,6 @@
 {
   "name": "@elaanio/react-core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "React bindings for @elaanio/core: <ElaanProvider> + hooks. Shared by @elaanio/react (web) and @elaanio/react-native. No UI, no DOM.",
   "type": "module",
   "main": "./dist/index.cjs",

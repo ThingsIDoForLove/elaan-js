@@ -1,17 +1,22 @@
 {
   "name": "@elaanio/elements",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Framework-agnostic Web Components for Elaan: <elaan-bell>, <elaan-feed>, <elaan-preferences>. Works in any page or framework.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "unpkg": "./dist/elaan-elements.global.js",
+  "jsdelivr": "./dist/elaan-elements.global.js",
+  "sideEffects": ["./dist/elaan-elements.global.js"],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    }
+    },
+    "./global": "./dist/elaan-elements.global.js",
+    "./package.json": "./package.json"
   },
   "files": ["dist"],
   "scripts": {
