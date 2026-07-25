@@ -9,7 +9,15 @@ import {
  * transport wired in by default (override `realtime` to disable/replace it).
  */
 export function ElaanProvider(props: ElaanProviderProps) {
-  return <BaseProvider realtime={fetchStreamTransport} {...props} />;
+  // `realtime` must be applied AFTER the spread: with `{...props}` last, an
+  // explicit `realtime={undefined}` (very common when forwarding an optional prop)
+  // would overwrite the default and silently drop back to polling-only.
+  return (
+    <BaseProvider
+      {...props}
+      realtime={props.realtime === undefined ? fetchStreamTransport : props.realtime}
+    />
+  );
 }
 
 export type { ElaanProviderProps };

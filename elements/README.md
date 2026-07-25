@@ -9,6 +9,16 @@ WordPress…) — no framework dependency, styles encapsulated in shadow DOM.
 npm install @elaanio/elements
 ```
 
+Or straight from a CDN — the standalone build inlines `@elaanio/core` and
+registers the tags on load, so no bundler and no `defineElaanElements()` call:
+
+```html
+<script src="https://unpkg.com/@elaanio/elements"></script>
+<script>
+  Elaan.configureElaan({ apiBase: "https://api.elaan.io/v1", tokenProvider });
+</script>
+```
+
 ## Use
 
 Register the elements once, configure the client (the SDK never sees your API
@@ -72,6 +82,17 @@ the shadow boundary). Light/dark is automatic via `prefers-color-scheme`.
 Available tokens: `--elaan-accent`, `--elaan-accent-ink`, `--elaan-bg`,
 `--elaan-bg-hover`, `--elaan-text`, `--elaan-muted`, `--elaan-border`,
 `--elaan-danger`, `--elaan-radius`, `--elaan-shadow`.
+
+`--elaan-accent-ink` is the text colour on top of `--elaan-accent` (the unread
+badge). It defaults to a near-black that reads against the default light-blue
+accent — if you set a **dark** accent, set the ink to something light too:
+
+```css
+:root {
+  --elaan-accent: #7c3aed;
+  --elaan-accent-ink: #ffffff;
+}
+```
 
 ## Push device tokens
 

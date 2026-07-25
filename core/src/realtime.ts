@@ -39,44 +39,65 @@ export const fetchStreamTransport: RealtimeTransport = (client, handlers) => {
   let controller: AbortController | null = null;
   let backoff = 1000;
 
-  async function connect(): Promise<void> {
-    controller = new AbortController();
-    try {
-      const res = await fetch(client.streamUrl(), {
-        headers: {
-          Authorization: client.authHeader(),
-          Accept: "text/event-stream",
-        },
-        signal: controller.signal,
-      });
-      if (res.status === 404 || res.status === 503) {
-        handlers.onUnavailable?.();
-        return; // realtime not enabled — do NOT reconnect
-      }
-      if (!res.ok || !res.body) throw new Error(`stream HTTP ${res.status}`);
-      handlers.onOpen?.();
-      backoff = 1000;
+  /** One connection attempt. Returns false to stop reconnecting for good. */
+  async function attempt(): Promise<boolean> {
+    // The stream URL embeds the contact id and the header carries the token —
+    // neither exists until the token provider has resolved, so wait for it.
+    await client.ready();
+    if (closed) return false;
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buf = "";
-      for (;;) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buf += decoder.decode(value, { stream: true });
-        let sep: number;
-        while ((sep = buf.indexOf("\n\n")) !== -1) {
-          emit(buf.slice(0, sep));
-          buf = buf.slice(sep + 2);
-        }
-      }
-    } catch {
-      /* network drop — fall through to reconnect */
+    controller = new AbortController();
+    const res = await fetch(client.streamUrl(), {
+      headers: {
+        Authorization: client.authHeader(),
+        Accept: "text/event-stream",
+      },
+      signal: controller.signal,
+    });
+    if (res.status === 404 || res.status === 503) {
+      handlers.onUnavailable?.();
+      return false; // realtime not enabled — do NOT reconnect
     }
-    if (!closed) {
+    if (res.status === 401 || res.status === 403) {
+      // Expired/rotated contact token. Drop it so the next attempt mints a fresh
+      // one; without this the stream would retry the same dead token forever.
+      handlers.onUnavailable?.();
+      client.invalidateToken();
+      throw new Error(`stream HTTP ${res.status}`);
+    }
+    if (!res.ok || !res.body) throw new Error(`stream HTTP ${res.status}`);
+
+    handlers.onOpen?.();
+    backoff = 1000;
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = "";
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      let sep: number;
+      while ((sep = buf.indexOf("\n\n")) !== -1) {
+        emit(buf.slice(0, sep));
+        buf = buf.slice(sep + 2);
+      }
+    }
+    return true; // stream ended cleanly — reconnect
+  }
+
+  // A loop rather than recursion: `return connect()` would chain a pending promise
+  // per reconnect and never release them for the life of the page.
+  async function connect(): Promise<void> {
+    while (!closed) {
+      try {
+        if (!(await attempt())) return;
+      } catch {
+        handlers.onUnavailable?.();
+      }
+      if (closed) return;
       await new Promise((r) => setTimeout(r, backoff));
       backoff = Math.min(backoff * 2, 15000);
-      if (!closed) return connect();
     }
   }
 
@@ -99,7 +120,7 @@ export const fetchStreamTransport: RealtimeTransport = (client, handlers) => {
     }
   }
 
-  connect();
+  void connect();
   return () => {
     closed = true;
     controller?.abort();

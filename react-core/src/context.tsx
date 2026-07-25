@@ -62,7 +62,32 @@ export function ElaanProvider({
     };
   }, [apiBase, realtime, pollInterval]);
 
-  useEffect(() => () => value.inbox.destroy(), [value]);
+  // StrictMode (and React 18 offscreen remounts) run effects mount → cleanup →
+  // mount again against the SAME memoized value. Destroying synchronously in the
+  // cleanup would kill the poll timer and the SSE stream of a store that is about
+  // to be reused, leaving a permanently dead inbox in dev. So defer the teardown
+  // and cancel it if the same value remounts. Keyed by value, so swapping to a new
+  // store still tears the old one down.
+  const teardowns = useRef(
+    new Map<ElaanContextValue, ReturnType<typeof setTimeout>>(),
+  );
+  useEffect(() => {
+    const pending = teardowns.current;
+    const scheduled = pending.get(value);
+    if (scheduled !== undefined) {
+      clearTimeout(scheduled);
+      pending.delete(value);
+    }
+    return () => {
+      pending.set(
+        value,
+        setTimeout(() => {
+          pending.delete(value);
+          value.inbox.destroy();
+        }, 0),
+      );
+    };
+  }, [value]);
 
   return <ElaanContext.Provider value={value}>{children}</ElaanContext.Provider>;
 }
