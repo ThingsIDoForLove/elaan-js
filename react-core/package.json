@@ -30,5 +30,16 @@
     "tsup": "^8.0.0",
     "typescript": "^5.4.0"
   },
-  "license": "MIT"
+  "keywords": ["elaan", "notifications", "react", "hooks", "sdk"],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThingsIDoForLove/elaan-js.git",
+    "directory": "react-core"
+  },
+  "homepage": "https://github.com/ThingsIDoForLove/elaan-js/tree/main/react-core#readme",
+  "bugs": "https://github.com/ThingsIDoForLove/elaan-js/issues"
 }

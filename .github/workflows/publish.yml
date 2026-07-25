@@ -1,0 +1,43 @@
+name: Publish
+
+# Manual semver: bump the changed packages' "version" in package.json, commit,
+# then push a tag `vX.Y.Z` (or run this workflow manually). pnpm publishes every
+# package whose current version isn't yet on npm — in dependency order — and
+# skips the ones already published, so mixed-version releases just work.
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm provenance
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm -r build
+
+      - run: pnpm -r typecheck
+
+      # Publishes @elaan/core → react-core → react/react-native in dependency
+      # order, rewriting workspace:* to real versions. --no-git-checks because the
+      # tag checkout is detached; access comes from each package's publishConfig.
+      - run: pnpm -r publish --no-git-checks --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

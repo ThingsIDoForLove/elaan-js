@@ -34,5 +34,15 @@
     "typescript": "^5.4.0"
   },
   "keywords": ["elaan", "notifications", "inbox", "react-native", "push"],
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThingsIDoForLove/elaan-js.git",
+    "directory": "react-native"
+  },
+  "homepage": "https://github.com/ThingsIDoForLove/elaan-js/tree/main/react-native#readme",
+  "bugs": "https://github.com/ThingsIDoForLove/elaan-js/issues"
 }

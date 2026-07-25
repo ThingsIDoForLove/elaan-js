@@ -37,5 +37,15 @@
     "typescript": "^5.4.0"
   },
   "keywords": ["elaan", "notifications", "inbox", "react", "push", "sse"],
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThingsIDoForLove/elaan-js.git",
+    "directory": "react"
+  },
+  "homepage": "https://github.com/ThingsIDoForLove/elaan-js/tree/main/react#readme",
+  "bugs": "https://github.com/ThingsIDoForLove/elaan-js/issues"
 }
