@@ -13,7 +13,7 @@ their own repos (`elaan-swift`, `elaan-kotlin`).
 | [`@elaanio/core`](./core) | Framework-agnostic foundation — API client, types, observable inbox/preferences stores, and a realtime-transport interface. No UI, no framework. | npm |
 | [`@elaanio/react-core`](./react-core) | React bindings only (no DOM) — `ElaanProvider` + hooks (`useNotifications`, `useUnreadCount`, `usePreferences`, `usePush`) over the core stores. Shared by web and native. | npm |
 | [`@elaanio/react`](./react) | Web components — notification bell, feed, and preferences UI, plus real-time updates over SSE-on-fetch. | npm |
-| [`@elaanio/react-native`](./react-native) | React Native components over the same hooks (polling-based). | npm |
+| [`@elaanio/react-native`](./react-native) | React Native components over the same hooks; realtime over SSE (`react-native-sse`) with polling fallback. | npm |
 
 ### How they fit together
 
@@ -21,7 +21,7 @@ their own repos (`elaan-swift`, `elaan-kotlin`).
 @elaanio/core              vanilla TS: client · stores · realtime transport
    └─ @elaanio/react-core       React provider + hooks (framework, no DOM)
         ├─ @elaanio/react            web components + fetch-SSE realtime
-        └─ @elaanio/react-native     RN components (polling)
+        └─ @elaanio/react-native     RN components (SSE via react-native-sse)
 ```
 
 The non-visual logic lives once in `@elaanio/core`; each UI package is a thin
@@ -64,8 +64,10 @@ export function App() {
 
 Same provider and hooks; the components render with React Native primitives
 (`View`/`FlatList`/`Switch`/`Modal`) instead of DOM, and there's no stylesheet
-to import. Realtime falls back to polling (RN can't stream `fetch`), so the
-inbox refreshes on an interval (default 30s).
+to import. Realtime works over SSE via [`react-native-sse`](https://www.npmjs.com/package/react-native-sse)
+(RN can't stream `fetch`, but its XHR-based EventSource can send the auth
+header), wired into the RN provider by default and falling back to polling when
+the deployment has realtime off. Pass `realtime={null}` for polling only.
 
 ```tsx
 import {
