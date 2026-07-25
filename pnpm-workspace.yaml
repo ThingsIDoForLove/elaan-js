@@ -3,6 +3,8 @@ packages:
   - "react-core"
   - "react"
   - "react-native"
+  - "vue"
+  - "svelte"
 
 # esbuild (via tsup) needs its postinstall to fetch the platform binary.
 allowBuilds:
