@@ -8,7 +8,7 @@ export {
 } from "./hooks";
 
 // Re-export the core types + values consumers commonly need, so a framework
-// package can depend on just @elaan/react-core.
+// package can depend on just @elaanio/react-core.
 export {
   ElaanClient,
   ElaanError,
@@ -22,4 +22,4 @@ export {
   type TypePreference,
   type ElaanToken,
   type TokenProvider,
-} from "@elaan/core";
+} from "@elaanio/core";

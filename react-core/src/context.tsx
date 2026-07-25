@@ -14,7 +14,7 @@ import {
   type PreferencesStore,
   type RealtimeTransport,
   type TokenProvider,
-} from "@elaan/core";
+} from "@elaanio/core";
 
 interface ElaanContextValue {
   client: ElaanClient;
@@ -41,7 +41,7 @@ export interface ElaanProviderProps {
 
 /**
  * The framework binding: creates the framework-agnostic core stores once and
- * exposes them via context. All logic lives in @elaan/core; this is just wiring.
+ * exposes them via context. All logic lives in @elaanio/core; this is just wiring.
  */
 export function ElaanProvider({
   apiBase,

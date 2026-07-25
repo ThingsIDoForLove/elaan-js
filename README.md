@@ -10,23 +10,23 @@ their own repos (`elaan-swift`, `elaan-kotlin`).
 
 | Package | What it is | Registry |
 |---|---|---|
-| [`@elaan/core`](./core) | Framework-agnostic foundation — API client, types, observable inbox/preferences stores, and a realtime-transport interface. No UI, no framework. | npm |
-| [`@elaan/react-core`](./react-core) | React bindings only (no DOM) — `ElaanProvider` + hooks (`useNotifications`, `useUnreadCount`, `usePreferences`, `usePush`) over the core stores. Shared by web and native. | npm |
-| [`@elaan/react`](./react) | Web components — notification bell, feed, and preferences UI, plus real-time updates over SSE-on-fetch. | npm |
-| [`@elaan/react-native`](./react-native) | React Native components over the same hooks (polling-based). | npm |
+| [`@elaanio/core`](./core) | Framework-agnostic foundation — API client, types, observable inbox/preferences stores, and a realtime-transport interface. No UI, no framework. | npm |
+| [`@elaanio/react-core`](./react-core) | React bindings only (no DOM) — `ElaanProvider` + hooks (`useNotifications`, `useUnreadCount`, `usePreferences`, `usePush`) over the core stores. Shared by web and native. | npm |
+| [`@elaanio/react`](./react) | Web components — notification bell, feed, and preferences UI, plus real-time updates over SSE-on-fetch. | npm |
+| [`@elaanio/react-native`](./react-native) | React Native components over the same hooks (polling-based). | npm |
 
 ### How they fit together
 
 ```
-@elaan/core              vanilla TS: client · stores · realtime transport
-   └─ @elaan/react-core       React provider + hooks (framework, no DOM)
-        ├─ @elaan/react            web components + fetch-SSE realtime
-        └─ @elaan/react-native     RN components (polling)
+@elaanio/core              vanilla TS: client · stores · realtime transport
+   └─ @elaanio/react-core       React provider + hooks (framework, no DOM)
+        ├─ @elaanio/react            web components + fetch-SSE realtime
+        └─ @elaanio/react-native     RN components (polling)
 ```
 
-The non-visual logic lives once in `@elaan/core`; each UI package is a thin
-layer of components over the shared `@elaan/react-core` hooks. Adding another
-framework (Vue, Svelte, …) means a new binding package over `@elaan/core`, not a
+The non-visual logic lives once in `@elaanio/core`; each UI package is a thin
+layer of components over the shared `@elaanio/react-core` hooks. Adding another
+framework (Vue, Svelte, …) means a new binding package over `@elaanio/core`, not a
 reimplementation of the client or stores.
 
 ## Authentication (all packages)
@@ -35,14 +35,14 @@ The SDK never sees your API key. Your backend mints a short-lived **contact
 token** for the signed-in user (`POST /v1/contacts/tokens` with your service
 key, by `external_id`) and returns it to the client. You pass the SDK a
 `tokenProvider` callback that fetches a fresh token from your own endpoint; it
-refreshes automatically on expiry. See [`@elaan/react`](./react#readme) for the
+refreshes automatically on expiry. See [`@elaanio/react`](./react#readme) for the
 full token flow.
 
 ## Quick start — React (web)
 
 ```tsx
-import { ElaanProvider, NotificationBell, Preferences } from "@elaan/react";
-import "@elaan/react/styles.css";
+import { ElaanProvider, NotificationBell, Preferences } from "@elaanio/react";
+import "@elaanio/react/styles.css";
 
 async function tokenProvider() {
   const res = await fetch("/api/elaan-token"); // your endpoint
@@ -73,7 +73,7 @@ import {
   NotificationBell,
   NotificationFeed,
   Preferences,
-} from "@elaan/react-native";
+} from "@elaanio/react-native";
 
 async function tokenProvider() {
   const res = await fetch("https://yourapp.com/api/elaan-token", {
@@ -102,7 +102,7 @@ export default function App() {
 ### Registering a device token (Expo / FCM)
 
 ```tsx
-import { usePush } from "@elaan/react-native";
+import { usePush } from "@elaanio/react-native";
 
 function useRegisterPush(expoToken: string) {
   const { register } = usePush();
@@ -115,7 +115,7 @@ function useRegisterPush(expoToken: string) {
 
 ## Theming & styling
 
-**Web (`@elaan/react`)** ships a stylesheet driven entirely by CSS variables, so
+**Web (`@elaanio/react`)** ships a stylesheet driven entirely by CSS variables, so
 you theme it without touching component internals. Import the stylesheet once,
 then override the variables on `:root` (or any ancestor of the components):
 
@@ -139,7 +139,7 @@ override the same variables inside your own media query to customize dark mode.
 Each element also carries a stable `elaan-*` class (`.elaan-bell`,
 `.elaan-feed`, `.elaan-item`, …) if you need finer CSS control.
 
-**React Native (`@elaan/react-native`)** components use `StyleSheet` with a
+**React Native (`@elaanio/react-native`)** components use `StyleSheet` with a
 small built-in palette (accent, background, text, muted, border). There are no
 CSS variables in RN, so for anything beyond the defaults — brand fonts, custom
 row layouts, dark-mode palettes — build your own components on the hooks (next
@@ -151,13 +151,13 @@ The packaged components are deliberately thin. When the defaults don't fit —
 your own markup, a design system, a different layout, or a framework we don't
 ship yet — drop down a layer. Pick the lowest one you need:
 
-**1. Same framework, your own UI → use the hooks.** `@elaan/react` and
-`@elaan/react-native` both re-export the hooks from `@elaan/react-core`. Render
+**1. Same framework, your own UI → use the hooks.** `@elaanio/react` and
+`@elaanio/react-native` both re-export the hooks from `@elaanio/react-core`. Render
 whatever you like; the hook owns loading, polling, realtime, and optimistic
 updates:
 
 ```tsx
-import { useNotifications, usePreferences } from "@elaan/react"; // or /react-native
+import { useNotifications, usePreferences } from "@elaanio/react"; // or /react-native
 
 function MyInbox() {
   const { notifications, unreadCount, loading, markRead, markAllRead, remove } =
@@ -184,12 +184,12 @@ function MyPrefs() {
 Available hooks: `useNotifications`, `useUnreadCount`, `usePreferences`,
 `usePush` — all require an ancestor `<ElaanProvider>`.
 
-**2. A different framework (Vue, Svelte, Solid, vanilla) → use `@elaan/core`.**
+**2. A different framework (Vue, Svelte, Solid, vanilla) → use `@elaanio/core`.**
 The core exposes the same logic as framework-agnostic observable stores. This is
-exactly what `@elaan/react-core` is built on, so a new binding is small:
+exactly what `@elaanio/react-core` is built on, so a new binding is small:
 
 ```ts
-import { ElaanClient, createInboxStore } from "@elaan/core";
+import { ElaanClient, createInboxStore } from "@elaanio/core";
 
 const client = new ElaanClient("https://api.elaan.io/v1", tokenProvider);
 const inbox = createInboxStore(client, { pollInterval: 30000 });
@@ -202,7 +202,7 @@ inbox.markRead(id);                              // + markUnread / markAllRead /
 Wire `store.subscribe` + `store.getState` into your framework's reactivity
 (Vue `ref`, Svelte store contract, `useSyncExternalStore`, …). For one-off calls
 that don't need a store, `ElaanClient` has every endpoint directly. If you build
-a binding for another framework, a PR adding an `@elaan/<framework>` package is
+a binding for another framework, a PR adding an `@elaanio/<framework>` package is
 very welcome.
 
 ## Development
@@ -232,7 +232,7 @@ Versioning is **manual semver, per package**. To cut a release:
 One-time setup (repo owner):
 
 - Own the **`@elaan` scope/org** on [npmjs.com](https://www.npmjs.com/) (the
-  packages are scoped `@elaan/*`).
+  packages are scoped `@elaanio/*`).
 - Add an **`NPM_TOKEN`** repository secret (Settings → Secrets and variables →
   Actions) — an npm **Automation** token with publish rights to the scope.
 

@@ -1,11 +1,11 @@
-# @elaan/react
+# @elaanio/react
 
 Drop-in React components + hooks for [Elaan](https://elaan.io): an in-app
 notification inbox, a notification bell, a preferences center, and push
 device-token registration — all backed by your Elaan account.
 
 ```bash
-npm install @elaan/react
+npm install @elaanio/react
 ```
 
 ## 1. Mint a contact token on your backend
@@ -33,8 +33,8 @@ Pass a `tokenProvider` that fetches a fresh token from your endpoint. The SDK
 refreshes it automatically on expiry.
 
 ```tsx
-import { ElaanProvider } from "@elaan/react";
-import "@elaan/react/styles.css";
+import { ElaanProvider } from "@elaanio/react";
+import "@elaanio/react/styles.css";
 
 async function tokenProvider() {
   const res = await fetch("/api/elaan-token");
@@ -54,7 +54,7 @@ export function App() {
 ## 3. Use the components
 
 ```tsx
-import { NotificationBell, NotificationFeed, Preferences } from "@elaan/react";
+import { NotificationBell, NotificationFeed, Preferences } from "@elaanio/react";
 
 // A bell with an unread badge + popover inbox — drop it in your header.
 <NotificationBell />
@@ -69,7 +69,7 @@ import { NotificationBell, NotificationFeed, Preferences } from "@elaan/react";
 ### Push device tokens
 
 ```tsx
-import { usePush } from "@elaan/react";
+import { usePush } from "@elaanio/react";
 
 const { register, unregister } = usePush();
 await register(fcmToken, "fcm", "web"); // provider: fcm | apns | expo | onesignal | webpush
@@ -86,7 +86,7 @@ pass `realtime={false}` to force polling, or `pollInterval={ms}` to tune it.
 Every component is built on hooks you can use directly:
 
 ```tsx
-import { useNotifications, usePreferences } from "@elaan/react";
+import { useNotifications, usePreferences } from "@elaanio/react";
 
 const { notifications, unreadCount, connected, markRead, markAllRead, remove } =
   useNotifications();

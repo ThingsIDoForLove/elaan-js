@@ -5,5 +5,5 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  external: ["react", "react-dom", "react-native", "@elaan/core", "@elaan/react-core"],
+  external: ["react", "react-dom", "react-native", "@elaanio/core", "@elaanio/react-core"],
 });

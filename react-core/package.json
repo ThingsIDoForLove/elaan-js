@@ -1,7 +1,7 @@
 {
-  "name": "@elaan/react-core",
+  "name": "@elaanio/react-core",
   "version": "0.1.0",
-  "description": "React bindings for @elaan/core: <ElaanProvider> + hooks. Shared by @elaan/react (web) and @elaan/react-native. No UI, no DOM.",
+  "description": "React bindings for @elaanio/core: <ElaanProvider> + hooks. Shared by @elaanio/react (web) and @elaanio/react-native. No UI, no DOM.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -19,7 +19,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@elaan/core": "workspace:*"
+    "@elaanio/core": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18"

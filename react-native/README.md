@@ -1,15 +1,15 @@
-# @elaan/react-native
+# @elaanio/react-native
 
 Drop-in **React Native** components + hooks for [Elaan](https://elaan.io): an
 in-app notification inbox, a bell with an unread badge, a preferences center, and
 push device-token registration — backed by your Elaan account.
 
 ```bash
-npm install @elaan/react-native
+npm install @elaanio/react-native
 ```
 
 Peer dependencies: `react` and `react-native`. Same API as
-[`@elaan/react`](https://www.npmjs.com/package/@elaan/react); the components
+[`@elaanio/react`](https://www.npmjs.com/package/@elaanio/react); the components
 render with RN primitives (`View`/`FlatList`/`Switch`/`Modal`) and there's no
 stylesheet to import.
 
@@ -22,7 +22,7 @@ by `external_id`) and returns it to the app.
 ## 2. Wrap your app in the provider
 
 ```tsx
-import { ElaanProvider } from "@elaan/react-native";
+import { ElaanProvider } from "@elaanio/react-native";
 
 async function tokenProvider() {
   const res = await fetch("https://yourapp.com/api/elaan-token", {
@@ -52,7 +52,7 @@ import {
   NotificationBell,
   NotificationFeed,
   Preferences,
-} from "@elaan/react-native";
+} from "@elaanio/react-native";
 
 // Bell + badge that opens the inbox in a modal card — drop in a header.
 <NotificationBell onNotificationPress={(n) => navigate(n)} />
@@ -70,7 +70,7 @@ import {
 ### Push device tokens
 
 ```tsx
-import { usePush } from "@elaan/react-native";
+import { usePush } from "@elaanio/react-native";
 
 const { register, unregister } = usePush();
 // provider: "expo" | "fcm" | "apns" | "onesignal" | "webpush"
@@ -86,7 +86,7 @@ dark-mode palette, **build your own components on the hooks** — that's the
 intended path for heavy customization:
 
 ```tsx
-import { useNotifications, usePreferences, useUnreadCount } from "@elaan/react-native";
+import { useNotifications, usePreferences, useUnreadCount } from "@elaanio/react-native";
 
 function MyInbox() {
   const { notifications, loading, markRead, markAllRead, remove } =
@@ -97,7 +97,7 @@ function MyInbox() {
 ```
 
 The hooks are re-exported from
-[`@elaan/react-core`](https://www.npmjs.com/package/@elaan/react-core); see the
+[`@elaanio/react-core`](https://www.npmjs.com/package/@elaanio/react-core); see the
 [repo README](https://github.com/ThingsIDoForLove/elaan-js#building-your-own-components)
 for the full "build your own" guide.
 

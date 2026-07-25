@@ -1,5 +1,5 @@
-import { usePreferences } from "@elaan/react-core";
-import type { Channel } from "@elaan/react-core";
+import { usePreferences } from "@elaanio/react-core";
+import type { Channel } from "@elaanio/react-core";
 
 const CHANNEL_LABELS: Record<Channel, string> = {
   email: "Email",

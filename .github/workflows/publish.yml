@@ -35,7 +35,7 @@ jobs:
 
       - run: pnpm -r typecheck
 
-      # Publishes @elaan/core → react-core → react/react-native in dependency
+      # Publishes @elaanio/core → react-core → react/react-native in dependency
       # order, rewriting workspace:* to real versions. --no-git-checks because the
       # tag checkout is detached; access comes from each package's publishConfig.
       - run: pnpm -r publish --no-git-checks --provenance

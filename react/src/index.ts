@@ -1,13 +1,13 @@
 export { ElaanProvider } from "./provider";
 export type { ElaanProviderProps } from "./provider";
 
-// The React binding (hooks) is shared with @elaan/react-native via @elaan/react-core.
+// The React binding (hooks) is shared with @elaanio/react-native via @elaanio/react-core.
 export {
   useNotifications,
   useUnreadCount,
   usePreferences,
   usePush,
-} from "@elaan/react-core";
+} from "@elaanio/react-core";
 
 // Web components.
 export { NotificationBell } from "./components/NotificationBell";
@@ -17,7 +17,7 @@ export type { NotificationFeedProps } from "./components/NotificationFeed";
 export { Preferences } from "./components/Preferences";
 export type { PreferencesProps } from "./components/Preferences";
 
-export { ElaanClient, ElaanError } from "@elaan/core";
+export { ElaanClient, ElaanError } from "@elaanio/core";
 export type {
   Channel,
   PushProvider,
@@ -27,4 +27,4 @@ export type {
   TypePreference,
   ElaanToken,
   TokenProvider,
-} from "@elaan/core";
+} from "@elaanio/core";

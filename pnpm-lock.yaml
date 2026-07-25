@@ -17,10 +17,10 @@ importers:
 
   react:
     dependencies:
-      '@elaan/core':
+      '@elaanio/core':
         specifier: workspace:*
         version: link:../core
-      '@elaan/react-core':
+      '@elaanio/react-core':
         specifier: workspace:*
         version: link:../react-core
     devDependencies:
@@ -42,7 +42,7 @@ importers:
 
   react-core:
     dependencies:
-      '@elaan/core':
+      '@elaanio/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
@@ -61,10 +61,10 @@ importers:
 
   react-native:
     dependencies:
-      '@elaan/core':
+      '@elaanio/core':
         specifier: workspace:*
         version: link:../core
-      '@elaan/react-core':
+      '@elaanio/react-core':
         specifier: workspace:*
         version: link:../react-core
     devDependencies:

@@ -1,5 +1,5 @@
 {
-  "name": "@elaan/react",
+  "name": "@elaanio/react",
   "version": "0.1.0",
   "description": "React components + hooks for Elaan: notification inbox, preferences, and push token registration.",
   "type": "module",
@@ -22,8 +22,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@elaan/core": "workspace:*",
-    "@elaan/react-core": "workspace:*"
+    "@elaanio/core": "workspace:*",
+    "@elaanio/react-core": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18",

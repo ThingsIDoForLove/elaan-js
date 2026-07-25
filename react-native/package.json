@@ -1,5 +1,5 @@
 {
-  "name": "@elaan/react-native",
+  "name": "@elaanio/react-native",
   "version": "0.1.0",
   "description": "React Native components + hooks for Elaan: notification inbox, preferences, and push device-token registration.",
   "type": "module",
@@ -19,8 +19,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@elaan/core": "workspace:*",
-    "@elaan/react-core": "workspace:*"
+    "@elaanio/core": "workspace:*",
+    "@elaanio/react-core": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18",

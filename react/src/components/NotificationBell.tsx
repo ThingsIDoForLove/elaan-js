@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useUnreadCount } from "@elaan/react-core";
+import { useUnreadCount } from "@elaanio/react-core";
 import { NotificationFeed, type NotificationFeedProps } from "./NotificationFeed";
 
 export interface NotificationBellProps extends NotificationFeedProps {}

@@ -1,5 +1,5 @@
-import { useNotifications } from "@elaan/react-core";
-import type { ElaanNotification } from "@elaan/react-core";
+import { useNotifications } from "@elaanio/react-core";
+import type { ElaanNotification } from "@elaanio/react-core";
 
 function timeAgo(iso: string): string {
   const then = new Date(iso).getTime();

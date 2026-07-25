@@ -1,4 +1,4 @@
-// The React binding is shared with @elaan/react via @elaan/react-core. RN gets
+// The React binding is shared with @elaanio/react via @elaanio/react-core. RN gets
 // the polling-only provider (no fetch-SSE transport — RN can't stream fetch).
 export {
   ElaanProvider,
@@ -6,8 +6,8 @@ export {
   useUnreadCount,
   usePreferences,
   usePush,
-} from "@elaan/react-core";
-export type { ElaanProviderProps } from "@elaan/react-core";
+} from "@elaanio/react-core";
+export type { ElaanProviderProps } from "@elaanio/react-core";
 
 // React Native components.
 export { NotificationBell } from "./components/NotificationBell";
@@ -17,7 +17,7 @@ export type { NotificationFeedProps } from "./components/NotificationFeed";
 export { Preferences } from "./components/Preferences";
 export type { PreferencesProps } from "./components/Preferences";
 
-export { ElaanClient, ElaanError } from "@elaan/core";
+export { ElaanClient, ElaanError } from "@elaanio/core";
 export type {
   Channel,
   PushProvider,
@@ -27,4 +27,4 @@ export type {
   TypePreference,
   ElaanToken,
   TokenProvider,
-} from "@elaan/core";
+} from "@elaanio/core";

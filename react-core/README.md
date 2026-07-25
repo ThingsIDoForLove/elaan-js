@@ -1,28 +1,28 @@
-# @elaan/react-core
+# @elaanio/react-core
 
 The **React binding** for [Elaan](https://elaan.io) — a provider and hooks over
-the [`@elaan/core`](https://www.npmjs.com/package/@elaan/core) stores. Pure React,
+the [`@elaanio/core`](https://www.npmjs.com/package/@elaanio/core) stores. Pure React,
 **no DOM and no React Native primitives**, so it's shared by both the web and
 native component packages.
 
 ```bash
-npm install @elaan/react-core
+npm install @elaanio/react-core
 ```
 
 Most apps don't install this directly — install the package for your platform,
 which re-exports everything here:
 
-- **Web** → [`@elaan/react`](https://www.npmjs.com/package/@elaan/react) (adds DOM components + fetch-SSE realtime)
-- **React Native** → [`@elaan/react-native`](https://www.npmjs.com/package/@elaan/react-native) (adds RN components)
+- **Web** → [`@elaanio/react`](https://www.npmjs.com/package/@elaanio/react) (adds DOM components + fetch-SSE realtime)
+- **React Native** → [`@elaanio/react-native`](https://www.npmjs.com/package/@elaanio/react-native) (adds RN components)
 
-Install `@elaan/react-core` directly when you want the **hooks with entirely your
+Install `@elaanio/react-core` directly when you want the **hooks with entirely your
 own components**, on a platform where you supply your own realtime transport (or
 none).
 
 ## Provider
 
 ```tsx
-import { ElaanProvider } from "@elaan/react-core";
+import { ElaanProvider } from "@elaanio/react-core";
 
 <ElaanProvider
   apiBase="https://api.elaan.io/v1"
@@ -48,7 +48,7 @@ import {
   useUnreadCount,
   usePreferences,
   usePush,
-} from "@elaan/react-core";
+} from "@elaanio/react-core";
 
 // Inbox: state + actions
 const {
@@ -72,13 +72,13 @@ const { register, unregister } = usePush();
 await register(deviceToken, "expo", "ios"); // provider, platform?
 ```
 
-Under the hood the hooks subscribe to the `@elaan/core` stores via
+Under the hood the hooks subscribe to the `@elaanio/core` stores via
 `useSyncExternalStore`, so they get polling, realtime merge, and optimistic
 updates for free.
 
 ## Also re-exported
 
-For convenience so a downstream package can depend on just `@elaan/react-core`:
+For convenience so a downstream package can depend on just `@elaanio/react-core`:
 `ElaanClient`, `ElaanError`, `fetchStreamTransport`, and the core types
 (`ElaanNotification`, `TypePreference`, `Channel`, `PushProvider`, `Platform`, …).
 
@@ -87,8 +87,8 @@ For convenience so a downstream package can depend on just `@elaan/react-core`:
 This package **is** the recommended base for a custom React component set — web
 or native. Consume the hooks, render your own markup, and (on web) inject
 `fetchStreamTransport` via the provider's `realtime` prop. See
-[`@elaan/react`](https://www.npmjs.com/package/@elaan/react) and
-[`@elaan/react-native`](https://www.npmjs.com/package/@elaan/react-native) for two
+[`@elaanio/react`](https://www.npmjs.com/package/@elaanio/react) and
+[`@elaanio/react-native`](https://www.npmjs.com/package/@elaanio/react-native) for two
 worked examples.
 
 ## License
