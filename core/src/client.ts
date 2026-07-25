@@ -56,6 +56,16 @@ export class ElaanClient {
     this.token = null;
   }
 
+  /**
+   * Resolve a token (and therefore the contact id) if we don't have one yet.
+   * `request()` does this itself; realtime transports must call it explicitly
+   * before reading `streamUrl()`/`authHeader()`, which are only meaningful once
+   * a token has been minted.
+   */
+  async ready(): Promise<void> {
+    await this.ensureToken();
+  }
+
   async request<T>(
     path: string,
     opts: { method?: string; body?: unknown; retry?: boolean } = {},
@@ -96,84 +106,107 @@ export class ElaanClient {
     return (await res.json()) as T;
   }
 
-  private base(): string {
-    return `/contacts/${encodeURIComponent(this._contactId as string)}`;
+  /**
+   * The contact-scoped path prefix. The contact id only exists once a token has
+   * been minted, so this MUST be awaited — building a path from a null contact id
+   * would silently address `/contacts/null/...`.
+   */
+  private async base(): Promise<string> {
+    await this.ensureToken();
+    return this.baseSync();
+  }
+
+  private baseSync(): string {
+    if (!this._contactId) {
+      throw new ElaanError(
+        0,
+        "No contact id yet — await client.ready() before reading stream URLs.",
+      );
+    }
+    return `/contacts/${encodeURIComponent(this._contactId)}`;
   }
 
   // --- inbox ---
-  listNotifications(unreadOnly = false): Promise<ElaanNotification[]> {
+  async listNotifications(unreadOnly = false): Promise<ElaanNotification[]> {
     const q = unreadOnly ? "?unread=true" : "";
-    return this.request(`${this.base()}/notifications${q}`);
+    return this.request(`${await this.base()}/notifications${q}`);
   }
-  unreadCount(): Promise<{ unread: number }> {
-    return this.request(`${this.base()}/notifications/unread-count`);
+  async unreadCount(): Promise<{ unread: number }> {
+    return this.request(`${await this.base()}/notifications/unread-count`);
   }
-  markRead(id: string): Promise<ElaanNotification> {
-    return this.request(`${this.base()}/notifications/${id}/read`, {
+  async markRead(id: string): Promise<ElaanNotification> {
+    return this.request(
+      `${await this.base()}/notifications/${encodeURIComponent(id)}/read`,
+      { method: "POST" },
+    );
+  }
+  async markUnread(id: string): Promise<ElaanNotification> {
+    return this.request(
+      `${await this.base()}/notifications/${encodeURIComponent(id)}/unread`,
+      { method: "POST" },
+    );
+  }
+  async markAllRead(): Promise<void> {
+    return this.request(`${await this.base()}/notifications/read-all`, {
       method: "POST",
     });
   }
-  markUnread(id: string): Promise<ElaanNotification> {
-    return this.request(`${this.base()}/notifications/${id}/unread`, {
-      method: "POST",
-    });
-  }
-  markAllRead(): Promise<void> {
-    return this.request(`${this.base()}/notifications/read-all`, {
-      method: "POST",
-    });
-  }
-  deleteNotification(id: string): Promise<void> {
-    return this.request(`${this.base()}/notifications/${id}`, {
-      method: "DELETE",
-    });
+  async deleteNotification(id: string): Promise<void> {
+    return this.request(
+      `${await this.base()}/notifications/${encodeURIComponent(id)}`,
+      { method: "DELETE" },
+    );
   }
 
   // --- preferences ---
-  getPreferences(): Promise<TypePreference[]> {
-    return this.request(`${this.base()}/preferences`);
+  async getPreferences(): Promise<TypePreference[]> {
+    return this.request(`${await this.base()}/preferences`);
   }
-  setPreference(
+  async setPreference(
     notification_type_key: string,
     channel: ChannelPreference["channel"],
     enabled: boolean,
   ): Promise<unknown> {
-    return this.request(`${this.base()}/preferences`, {
+    return this.request(`${await this.base()}/preferences`, {
       method: "PUT",
       body: { notification_type_key, channel, enabled },
     });
   }
-  clearPreference(
+  async clearPreference(
     notification_type_key: string,
     channel: ChannelPreference["channel"],
   ): Promise<unknown> {
     return this.request(
-      `${this.base()}/preferences/${encodeURIComponent(notification_type_key)}/${channel}`,
+      `${await this.base()}/preferences/${encodeURIComponent(notification_type_key)}/${encodeURIComponent(channel)}`,
       { method: "DELETE" },
     );
   }
 
   // --- push device tokens ---
-  addPushSubscription(
+  async addPushSubscription(
     value: string,
     provider: PushProvider,
     platform?: Platform,
   ): Promise<unknown> {
-    return this.request(`${this.base()}/push-subscriptions`, {
+    return this.request(`${await this.base()}/push-subscriptions`, {
       method: "POST",
       body: { value, provider, platform },
     });
   }
-  removePushSubscription(value: string, provider: PushProvider): Promise<unknown> {
-    const q = `?value=${encodeURIComponent(value)}&provider=${provider}`;
-    return this.request(`${this.base()}/push-subscriptions${q}`, {
+  async removePushSubscription(
+    value: string,
+    provider: PushProvider,
+  ): Promise<unknown> {
+    const q = `?value=${encodeURIComponent(value)}&provider=${encodeURIComponent(provider)}`;
+    return this.request(`${await this.base()}/push-subscriptions${q}`, {
       method: "DELETE",
     });
   }
 
-  // The bare values a raw SSE client needs.
+  // The bare values a raw SSE client needs. Call `await client.ready()` first —
+  // both throw/return a null token until the token provider has resolved.
   streamUrl(): string {
-    return `${this.apiBase}${this.base()}/stream`;
+    return `${this.apiBase}${this.baseSync()}/stream`;
   }
   authHeader(): string {
     return `Bearer ${this.token}`;

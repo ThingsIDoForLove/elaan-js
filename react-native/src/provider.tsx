@@ -11,7 +11,17 @@ import { reactNativeSseTransport } from "./realtime";
  * to force polling only.
  */
 export function ElaanProvider(props: ElaanProviderProps) {
-  return <BaseProvider realtime={reactNativeSseTransport} {...props} />;
+  // `realtime` must be applied AFTER the spread: with `{...props}` last, an
+  // explicit `realtime={undefined}` (very common when forwarding an optional prop)
+  // would overwrite the default and silently drop back to polling-only.
+  return (
+    <BaseProvider
+      {...props}
+      realtime={
+        props.realtime === undefined ? reactNativeSseTransport : props.realtime
+      }
+    />
+  );
 }
 
 export type { ElaanProviderProps };
