@@ -16,6 +16,7 @@ their own repos (`elaan-swift`, `elaan-kotlin`).
 | [`@elaanio/react-native`](./react-native) | React Native components over the same hooks; realtime over SSE (`react-native-sse`) with polling fallback. | npm |
 | [`@elaanio/vue`](./vue) | Vue 3 components + composables — bell, feed, and preferences, with fetch-SSE realtime. | npm |
 | [`@elaanio/svelte`](./svelte) | Svelte stores (headless) — reactive inbox, unread count, and preferences; bring your own markup. | npm |
+| [`@elaanio/elements`](./elements) | Framework-agnostic Web Components — `<elaan-bell>` / `<elaan-feed>` / `<elaan-preferences>`. Drop into any page or framework. | npm |
 
 ### How they fit together
 
@@ -25,7 +26,8 @@ their own repos (`elaan-swift`, `elaan-kotlin`).
    │    ├─ @elaanio/react                web components + fetch-SSE realtime
    │    └─ @elaanio/react-native         RN components (SSE via react-native-sse)
    ├─ @elaanio/vue                  Vue 3 components + composables
-   └─ @elaanio/svelte               Svelte stores (headless)
+   ├─ @elaanio/svelte               Svelte stores (headless)
+   └─ @elaanio/elements             Web Components (works anywhere)
 ```
 
 The non-visual logic lives once in `@elaanio/core`; each framework package is a

@@ -5,6 +5,7 @@ packages:
   - "react-native"
   - "vue"
   - "svelte"
+  - "elements"
 
 # esbuild (via tsup) needs its postinstall to fetch the platform binary.
 allowBuilds:
