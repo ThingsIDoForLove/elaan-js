@@ -5,7 +5,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { usePreferences, type Channel } from "@elaan/react-core";
+import { usePreferences, type Channel } from "@elaanio/react-core";
 import { colors } from "../theme";
 
 const CHANNEL_LABELS: Record<Channel, string> = {

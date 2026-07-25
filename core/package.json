@@ -1,5 +1,5 @@
 {
-  "name": "@elaan/core",
+  "name": "@elaanio/core",
   "version": "0.1.0",
   "description": "Framework-agnostic core for Elaan: API client, observable inbox/preferences stores, and realtime transport. The base every framework SDK builds on.",
   "type": "module",

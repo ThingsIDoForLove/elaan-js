@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useNotifications, type ElaanNotification } from "@elaan/react-core";
+import { useNotifications, type ElaanNotification } from "@elaanio/react-core";
 import { colors, timeAgo } from "../theme";
 
 export interface NotificationFeedProps {

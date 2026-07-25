@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
-import { useUnreadCount } from "@elaan/react-core";
+import { useUnreadCount } from "@elaanio/react-core";
 import { colors } from "../theme";
 import { NotificationFeed, type NotificationFeedProps } from "./NotificationFeed";
 

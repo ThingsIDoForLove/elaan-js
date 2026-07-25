@@ -1,5 +1,5 @@
 import { useCallback, useSyncExternalStore } from "react";
-import type { Channel, Platform, PushProvider } from "@elaan/core";
+import type { Channel, Platform, PushProvider } from "@elaanio/core";
 import { useElaanContext } from "./context";
 
 /** The inbox: notifications, unread count, live-connection state, and actions. */

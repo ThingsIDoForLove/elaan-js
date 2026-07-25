@@ -1,19 +1,19 @@
-# @elaan/core
+# @elaanio/core
 
 The framework-agnostic foundation of the [Elaan](https://elaan.io) JavaScript
 SDKs: the API client, wire types, observable inbox/preferences **stores**, and a
 pluggable **realtime transport** — no UI, no framework, no DOM.
 
 ```bash
-npm install @elaan/core
+npm install @elaanio/core
 ```
 
 You usually don't install this directly. Use a binding:
 
-- **React (web)** → [`@elaan/react`](https://www.npmjs.com/package/@elaan/react)
-- **React Native** → [`@elaan/react-native`](https://www.npmjs.com/package/@elaan/react-native)
+- **React (web)** → [`@elaanio/react`](https://www.npmjs.com/package/@elaanio/react)
+- **React Native** → [`@elaanio/react-native`](https://www.npmjs.com/package/@elaanio/react-native)
 
-Reach for `@elaan/core` when you're **building your own binding** (Vue, Svelte,
+Reach for `@elaanio/core` when you're **building your own binding** (Vue, Svelte,
 Solid, vanilla JS, or another React component set) — it holds all the logic those
 packages wrap.
 
@@ -32,7 +32,7 @@ packages wrap.
 ## The client
 
 ```ts
-import { ElaanClient } from "@elaan/core";
+import { ElaanClient } from "@elaanio/core";
 
 // tokenProvider: () => Promise<{ token, contactId }> — minted by YOUR backend
 // via POST /v1/contacts/tokens. The client never sees your API key.
@@ -60,7 +60,7 @@ client. They're plain observables — `getState()` + `subscribe(listener)` — s
 reactivity system can bind to them.
 
 ```ts
-import { ElaanClient, createInboxStore } from "@elaan/core";
+import { ElaanClient, createInboxStore } from "@elaanio/core";
 
 const client = new ElaanClient("https://api.elaan.io/v1", tokenProvider);
 const inbox = createInboxStore(client, {
@@ -89,7 +89,7 @@ inbox.destroy();
 Wire `subscribe` + `getState` into your framework's reactivity — e.g. React's
 `useSyncExternalStore(inbox.subscribe, inbox.getState)`, a Svelte store, or a Vue
 `ref` updated in a `subscribe` callback. That's exactly how
-[`@elaan/react-core`](https://www.npmjs.com/package/@elaan/react-core) is built.
+[`@elaanio/react-core`](https://www.npmjs.com/package/@elaanio/react-core) is built.
 
 ## Realtime transport
 

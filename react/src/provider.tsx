@@ -2,7 +2,7 @@ import {
   ElaanProvider as BaseProvider,
   fetchStreamTransport,
   type ElaanProviderProps,
-} from "@elaan/react-core";
+} from "@elaanio/react-core";
 
 /**
  * Web <ElaanProvider>: the shared React binding with the fetch-SSE realtime
