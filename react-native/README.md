@@ -41,9 +41,24 @@ export default function App() {
 }
 ```
 
-The SDK refreshes the token automatically on expiry. Realtime uses **polling**
-(default every 30s) — React Native has no `fetch` body streaming, so SSE isn't
-used; tune with `pollInterval={ms}`.
+The SDK refreshes the token automatically on expiry.
+
+### Realtime
+
+The RN provider streams live updates over **SSE**, backed by
+[`react-native-sse`](https://www.npmjs.com/package/react-native-sse) (a runtime
+dependency). React Native can't stream a `fetch` body like the browser, but
+`react-native-sse`'s XHR-based EventSource can — and, unlike the browser's native
+`EventSource`, it sends the `Authorization` header the contact token needs. It's
+wired in by default and **falls back to polling** (default every 30s) when the
+deployment has realtime off or a connection can't be held. Tune the poll with
+`pollInterval={ms}`, or pass `realtime={null}` to disable SSE entirely.
+
+> **Backgrounding & SaaS notes.** A held SSE connection only survives while the
+> app is foregrounded — pair it with push notifications for background delivery
+> (the store refetches over REST on reconnect/foreground, so nothing is lost).
+> The SSE endpoint is also currently on-prem/ALB only; on API-Gateway SaaS the
+> transport gets a 404/503 and cleanly falls back to polling.
 
 ## 3. Use the components
 
