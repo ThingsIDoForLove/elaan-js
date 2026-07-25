@@ -4,7 +4,10 @@
 export const CSS = `
 :host {
   --_accent: var(--elaan-accent, #45b0ee);
-  --_accent-ink: var(--elaan-accent-ink, #ffffff);
+  /* Ink on top of --_accent. Dark by default because the default accent is a
+     light blue — white here is only ~2.4:1, well under the 4.5:1 floor. Override
+     --elaan-accent-ink alongside a darker --elaan-accent. */
+  --_accent-ink: var(--elaan-accent-ink, #04121e);
   --_bg: var(--elaan-bg, #ffffff);
   --_bg-hover: var(--elaan-bg-hover, #f4f6f9);
   --_text: var(--elaan-text, #1a1d23);
@@ -13,13 +16,15 @@ export const CSS = `
   --_danger: var(--elaan-danger, #ef4444);
   --_radius: var(--elaan-radius, 10px);
   --_shadow: var(--elaan-shadow, 0 12px 32px -12px rgba(0, 0, 0, 0.3));
-  display: inline-block;
+  /* Block by default so <elaan-feed>/<elaan-preferences> fill their container;
+     only the bell is an inline control. */
+  display: block;
   color: var(--_text);
   font: 14px/1.5 system-ui, -apple-system, sans-serif;
 }
+:host(elaan-bell) { display: inline-block; }
 @media (prefers-color-scheme: dark) {
   :host {
-    --_accent-ink: var(--elaan-accent-ink, #04121e);
     --_bg: var(--elaan-bg, #12151d);
     --_bg-hover: var(--elaan-bg-hover, #1a1f2a);
     --_text: var(--elaan-text, #e8eaf0);
@@ -28,6 +33,9 @@ export const CSS = `
   }
 }
 * { box-sizing: border-box; }
+/* The elements toggle visibility with the hidden property rather than by
+   rebuilding markup; make sure it beats the display rules below. */
+[hidden] { display: none !important; }
 
 .elaan-bell-wrap { position: relative; display: inline-block; }
 .elaan-bell {

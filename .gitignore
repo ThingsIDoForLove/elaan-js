@@ -1,3 +1,7 @@
 node_modules/
 dist/
 *.tsbuildinfo
+
+# Local gh auth (see .envrc) — never commit
+.gh_token
+.envrc

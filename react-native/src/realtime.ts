@@ -19,8 +19,18 @@ export const reactNativeSseTransport: RealtimeTransport = (client, handlers) => 
   let backoff = 1000;
   let timer: ReturnType<typeof setTimeout> | null = null;
 
-  function open(): void {
+  async function open(): Promise<void> {
     if (closed) return;
+    // The stream URL embeds the contact id and the header carries the token —
+    // neither exists until the token provider has resolved, so wait for it.
+    try {
+      await client.ready();
+    } catch {
+      if (!closed) retry();
+      return;
+    }
+    if (closed) return;
+
     es = new EventSource<"notification">(client.streamUrl(), {
       headers: { Authorization: client.authHeader() },
       pollingInterval: 0, // disable built-in reconnect; we do it (fresh token each time)
@@ -45,22 +55,33 @@ export const reactNativeSseTransport: RealtimeTransport = (client, handlers) => 
       if (closed) return;
       handlers.onUnavailable?.();
       const status = (event as { xhrStatus?: number }).xhrStatus;
+      es?.removeAllEventListeners();
       es?.close();
       es = null;
       if (status === 404 || status === 503) {
         closed = true; // realtime not enabled on this deployment — polling covers it
         return;
       }
-      // transient (network drop, or 401 while a REST poll refreshes the token) —
-      // reconnect with capped backoff, re-reading the header on the next open().
-      timer = setTimeout(() => {
-        backoff = Math.min(backoff * 2, 15000);
-        open();
-      }, backoff);
+      if (status === 401 || status === 403) {
+        // Expired/rotated contact token. Drop it so the next open() mints a fresh
+        // one; without this we'd retry the same dead token forever.
+        client.invalidateToken();
+      }
+      retry();
     });
   }
 
-  open();
+  /** Reconnect with capped backoff, re-reading the token on the next open(). */
+  function retry(): void {
+    if (closed || timer) return;
+    timer = setTimeout(() => {
+      timer = null;
+      backoff = Math.min(backoff * 2, 15000);
+      void open();
+    }, backoff);
+  }
+
+  void open();
   return () => {
     closed = true;
     if (timer) clearTimeout(timer);
