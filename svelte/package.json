@@ -1,0 +1,44 @@
+{
+  "name": "@elaanio/svelte",
+  "version": "0.1.0",
+  "description": "Svelte stores for Elaan: reactive inbox, unread count, and preferences, plus push token registration.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@elaanio/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "svelte": ">=4"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0"
+  },
+  "keywords": ["elaan", "notifications", "inbox", "svelte", "push"],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThingsIDoForLove/elaan-js.git",
+    "directory": "svelte"
+  },
+  "homepage": "https://github.com/ThingsIDoForLove/elaan-js/tree/main/svelte#readme",
+  "bugs": "https://github.com/ThingsIDoForLove/elaan-js/issues"
+}

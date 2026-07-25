@@ -12,22 +12,27 @@ their own repos (`elaan-swift`, `elaan-kotlin`).
 |---|---|---|
 | [`@elaanio/core`](./core) | Framework-agnostic foundation — API client, types, observable inbox/preferences stores, and a realtime-transport interface. No UI, no framework. | npm |
 | [`@elaanio/react-core`](./react-core) | React bindings only (no DOM) — `ElaanProvider` + hooks (`useNotifications`, `useUnreadCount`, `usePreferences`, `usePush`) over the core stores. Shared by web and native. | npm |
-| [`@elaanio/react`](./react) | Web components — notification bell, feed, and preferences UI, plus real-time updates over SSE-on-fetch. | npm |
+| [`@elaanio/react`](./react) | React (web) components — notification bell, feed, and preferences UI, plus real-time updates over SSE-on-fetch. | npm |
 | [`@elaanio/react-native`](./react-native) | React Native components over the same hooks; realtime over SSE (`react-native-sse`) with polling fallback. | npm |
+| [`@elaanio/vue`](./vue) | Vue 3 components + composables — bell, feed, and preferences, with fetch-SSE realtime. | npm |
+| [`@elaanio/svelte`](./svelte) | Svelte stores (headless) — reactive inbox, unread count, and preferences; bring your own markup. | npm |
 
 ### How they fit together
 
 ```
-@elaanio/core              vanilla TS: client · stores · realtime transport
-   └─ @elaanio/react-core       React provider + hooks (framework, no DOM)
-        ├─ @elaanio/react            web components + fetch-SSE realtime
-        └─ @elaanio/react-native     RN components (SSE via react-native-sse)
+@elaanio/core                  vanilla TS: client · stores · realtime transport
+   ├─ @elaanio/react-core           React provider + hooks (framework, no DOM)
+   │    ├─ @elaanio/react                web components + fetch-SSE realtime
+   │    └─ @elaanio/react-native         RN components (SSE via react-native-sse)
+   ├─ @elaanio/vue                  Vue 3 components + composables
+   └─ @elaanio/svelte               Svelte stores (headless)
 ```
 
-The non-visual logic lives once in `@elaanio/core`; each UI package is a thin
-layer of components over the shared `@elaanio/react-core` hooks. Adding another
-framework (Vue, Svelte, …) means a new binding package over `@elaanio/core`, not a
-reimplementation of the client or stores.
+The non-visual logic lives once in `@elaanio/core`; each framework package is a
+thin adapter over the core client + observable stores (React goes through the
+shared `@elaanio/react-core` hooks; Vue and Svelte bind the stores to their own
+reactivity). Adding another framework means a new binding over `@elaanio/core`,
+not a reimplementation of the client or stores.
 
 ## Authentication (all packages)
 
