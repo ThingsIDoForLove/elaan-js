@@ -1,0 +1,9 @@
+packages:
+  - "core"
+  - "react-core"
+  - "react"
+  - "react-native"
+
+# esbuild (via tsup) needs its postinstall to fetch the platform binary.
+allowBuilds:
+  esbuild: true
