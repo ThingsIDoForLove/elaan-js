@@ -215,6 +215,30 @@ pnpm -r build    # build every package (topological order)
 pnpm -r typecheck
 ```
 
+## Releasing
+
+Versioning is **manual semver, per package**. To cut a release:
+
+1. Bump `"version"` in the `package.json` of each package you're releasing.
+2. Commit, then push a tag:
+   ```bash
+   git tag v0.2.0 && git push origin v0.2.0
+   ```
+3. The [`Publish`](./.github/workflows/publish.yml) workflow builds, typechecks,
+   and runs `pnpm -r publish` — which publishes each package in dependency order
+   (rewriting `workspace:*` to real versions) and **skips any version already on
+   npm**, so releasing a subset just works.
+
+One-time setup (repo owner):
+
+- Own the **`@elaan` scope/org** on [npmjs.com](https://www.npmjs.com/) (the
+  packages are scoped `@elaan/*`).
+- Add an **`NPM_TOKEN`** repository secret (Settings → Secrets and variables →
+  Actions) — an npm **Automation** token with publish rights to the scope.
+
+Packages publish as public via each one's `publishConfig.access`, with npm
+provenance attested from the workflow.
+
 ## License
 
 MIT — see [LICENSE](./LICENSE).

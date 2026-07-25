@@ -24,5 +24,15 @@
     "typescript": "^5.4.0"
   },
   "keywords": ["elaan", "notifications", "sdk", "core"],
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThingsIDoForLove/elaan-js.git",
+    "directory": "core"
+  },
+  "homepage": "https://github.com/ThingsIDoForLove/elaan-js/tree/main/core#readme",
+  "bugs": "https://github.com/ThingsIDoForLove/elaan-js/issues"
 }
