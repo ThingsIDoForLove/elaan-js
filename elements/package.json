@@ -1,0 +1,48 @@
+{
+  "name": "@elaanio/elements",
+  "version": "0.1.0",
+  "description": "Framework-agnostic Web Components for Elaan: <elaan-bell>, <elaan-feed>, <elaan-preferences>. Works in any page or framework.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@elaanio/core": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0"
+  },
+  "keywords": [
+    "elaan",
+    "notifications",
+    "inbox",
+    "web-components",
+    "custom-elements",
+    "push"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThingsIDoForLove/elaan-js.git",
+    "directory": "elements"
+  },
+  "homepage": "https://github.com/ThingsIDoForLove/elaan-js/tree/main/elements#readme",
+  "bugs": "https://github.com/ThingsIDoForLove/elaan-js/issues"
+}
