@@ -23,6 +23,7 @@ export type {
   ElaanNotification,
   ChannelPreference,
   TypePreference,
+  ContactPreferences,
   ElaanToken,
   TokenProvider,
 } from "./types";

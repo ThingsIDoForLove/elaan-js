@@ -49,11 +49,12 @@ export interface ElaanInbox {
 }
 
 export interface ElaanPreferences {
-  /** `$preferences.state` → { preferences, loading }. */
+  /** `$preferences.state` → { preferences, language, loading }. */
   state: Readable<PreferencesState>;
   refresh: PreferencesStore["refresh"];
   setPreference: PreferencesStore["setPreference"];
   clearPreference: PreferencesStore["clearPreference"];
+  setLanguage: PreferencesStore["setLanguage"];
 }
 
 export interface ElaanPush {
@@ -117,6 +118,7 @@ export function createElaan(opts: CreateElaanOptions): Elaan {
       refresh: preferences.refresh,
       setPreference: preferences.setPreference,
       clearPreference: preferences.clearPreference,
+      setLanguage: preferences.setLanguage,
     },
     push: {
       register: (value, provider, platform) =>
