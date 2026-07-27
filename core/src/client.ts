@@ -1,10 +1,10 @@
 import type {
   ChannelPreference,
+  ContactPreferences,
   ElaanNotification,
   Platform,
   PushProvider,
   TokenProvider,
-  TypePreference,
 } from "./types";
 
 export class ElaanError extends Error {
@@ -159,7 +159,11 @@ export class ElaanClient {
   }
 
   // --- preferences ---
-  async getPreferences(): Promise<TypePreference[]> {
+  /**
+   * The contact's whole preference centre in one read: their saved preferred
+   * `language` (null = default) plus the notification `types` matrix.
+   */
+  async getPreferences(): Promise<ContactPreferences> {
     return this.request(`${await this.base()}/preferences`);
   }
   async setPreference(

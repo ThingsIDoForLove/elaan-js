@@ -26,6 +26,13 @@ export interface TypePreference {
   channels: ChannelPreference[];
 }
 
+/** The whole preference centre in one read: the contact's saved preferred
+ * language (null = default) plus the notification-type × channel matrix. */
+export interface ContactPreferences {
+  language: string | null;
+  types: TypePreference[];
+}
+
 // What the host app's token callback returns: a short-lived contact token minted
 // by the app's OWN backend (POST /v1/contacts/tokens), plus the contact's id.
 export interface ElaanToken {
