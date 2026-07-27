@@ -182,6 +182,19 @@ export class ElaanClient {
     );
   }
 
+  // --- preferred language ---
+  /**
+   * Set (or clear, with `null`) the contact's preferred language. When a matching
+   * language variant of a template exists the contact receives it; otherwise they
+   * fall back to the default. `language` is a tag like `"es"` or `"pt-br"`.
+   */
+  async setLanguage(language: string | null): Promise<unknown> {
+    return this.request(`${await this.base()}/language`, {
+      method: "PUT",
+      body: { language },
+    });
+  }
+
   // --- push device tokens ---
   async addPushSubscription(
     value: string,

@@ -49,6 +49,9 @@ await client.getPreferences();         // TypePreference[]
 await client.setPreference(typeKey, channel, enabled);
 await client.clearPreference(typeKey, channel);
 
+await client.setLanguage("es");        // preferred language ("es", "pt-br", …)
+await client.setLanguage(null);        // clear → default templates
+
 await client.addPushSubscription(token, "expo", "ios"); // provider, platform?
 await client.removePushSubscription(token, "expo");
 ```
