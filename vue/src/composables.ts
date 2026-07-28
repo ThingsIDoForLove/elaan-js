@@ -48,10 +48,12 @@ export function usePreferences() {
 
   return {
     preferences: computed(() => state.value.preferences),
+    language: computed(() => state.value.language),
     loading: computed(() => state.value.loading),
     refresh: preferences.refresh,
     setPreference: preferences.setPreference,
     clearPreference: preferences.clearPreference,
+    setLanguage: preferences.setLanguage,
   };
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "@elaanio/vue",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Vue 3 components + composables for Elaan: notification inbox, preferences, and push token registration.",
   "type": "module",
   "main": "./dist/index.cjs",

@@ -48,10 +48,12 @@ export function usePreferences() {
   );
   return {
     preferences: state.preferences,
+    language: state.language,
     loading: state.loading,
     refresh: preferences.refresh,
     setPreference: preferences.setPreference,
     clearPreference: preferences.clearPreference,
+    setLanguage: preferences.setLanguage,
   };
 }
 
