@@ -3,6 +3,8 @@ import type { Channel, TypePreference } from "./types";
 
 export interface PreferencesState {
   preferences: TypePreference[];
+  // The contact's saved preferred language (null = default / not set).
+  language: string | null;
   loading: boolean;
 }
 
@@ -16,11 +18,17 @@ export interface PreferencesStore {
     enabled: boolean,
   ): Promise<void>;
   clearPreference(notificationTypeKey: string, channel: Channel): Promise<void>;
+  // Set (or clear, with null) the contact's preferred language.
+  setLanguage(language: string | null): Promise<void>;
 }
 
-/** Framework-agnostic, observable preferences store (matrix + optimistic writes). */
+/** Framework-agnostic, observable preferences store (matrix + language + optimistic writes). */
 export function createPreferencesStore(client: ElaanClient): PreferencesStore {
-  let state: PreferencesState = { preferences: [], loading: true };
+  let state: PreferencesState = {
+    preferences: [],
+    language: null,
+    loading: true,
+  };
   const listeners = new Set<() => void>();
   const emit = () => listeners.forEach((l) => l());
   const set = (patch: Partial<PreferencesState>) => {
@@ -31,7 +39,8 @@ export function createPreferencesStore(client: ElaanClient): PreferencesStore {
   async function refresh(): Promise<void> {
     set({ loading: true });
     try {
-      set({ preferences: await client.getPreferences(), loading: false });
+      const { language, types } = await client.getPreferences();
+      set({ preferences: types, language, loading: false });
     } catch {
       set({ loading: false });
     }
@@ -72,6 +81,15 @@ export function createPreferencesStore(client: ElaanClient): PreferencesStore {
     }
   }
 
+  async function setLanguage(language: string | null): Promise<void> {
+    set({ language }); // optimistic
+    try {
+      await client.setLanguage(language);
+    } finally {
+      void refresh();
+    }
+  }
+
   void refresh();
 
   return {
@@ -83,5 +101,6 @@ export function createPreferencesStore(client: ElaanClient): PreferencesStore {
     refresh,
     setPreference,
     clearPreference,
+    setLanguage,
   };
 }
