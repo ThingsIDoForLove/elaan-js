@@ -24,6 +24,9 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { ElaanClient } from "./client.js";
 import { registerTools } from "./tools.js";
 
+// Substituted from package.json by tsup at build time.
+declare const __PKG_VERSION__: string;
+
 async function main() {
   const apiKey = process.env.ELAAN_API_KEY;
 
@@ -54,7 +57,7 @@ async function main() {
 
   const server = new McpServer({
     name: "elaan",
-    version: "0.1.0",
+    version: __PKG_VERSION__,
   });
 
   registerTools(server, new ElaanClient(apiKey));
