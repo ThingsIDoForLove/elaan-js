@@ -68,6 +68,14 @@ const init = await rpc("initialize", {
   clientInfo: { name: "e2e", version: "1" },
 });
 console.log("initialize →", init.result.serverInfo, "proto", init.result.protocolVersion);
+// serverInfo.version is the first thing you check when debugging which build
+// someone is running, so it must track package.json rather than a literal.
+const pkgVersion = JSON.parse(await (await import("node:fs/promises")).readFile(new URL("../package.json", import.meta.url), "utf8")).version;
+if (init.result.serverInfo.version !== pkgVersion) {
+  console.log(`  FAIL  serverInfo version ${init.result.serverInfo.version} != package.json ${pkgVersion}`);
+  process.exit(1);
+}
+console.log(`  serverInfo version matches package.json (${pkgVersion})`);
 notify("notifications/initialized", {});
 
 const list = await rpc("tools/list", {});
