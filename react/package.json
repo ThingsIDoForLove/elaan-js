@@ -1,6 +1,6 @@
 {
   "name": "@elaanio/react",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "React components + hooks for Elaan: notification inbox, preferences, and push token registration.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -46,6 +46,6 @@
     "url": "git+https://github.com/ThingsIDoForLove/elaan-js.git",
     "directory": "react"
   },
-  "homepage": "https://github.com/ThingsIDoForLove/elaan-js/tree/main/react#readme",
+  "homepage": "https://elaan.io/docs/react.html",
   "bugs": "https://github.com/ThingsIDoForLove/elaan-js/issues"
 }

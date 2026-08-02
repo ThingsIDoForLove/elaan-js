@@ -4,6 +4,8 @@ The framework-agnostic foundation of the [Elaan](https://elaan.io) JavaScript
 SDKs: the API client, wire types, observable inbox/preferences **stores**, and a
 pluggable **realtime transport** — no UI, no framework, no DOM.
 
+**Documentation:** [elaan.io/docs/headless.html](https://elaan.io/docs/headless.html)
+
 ```bash
 npm install @elaanio/core
 ```

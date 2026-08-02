@@ -1,6 +1,6 @@
 {
   "name": "@elaanio/svelte",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Svelte stores for Elaan: reactive inbox, unread count, and preferences, plus push token registration.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -39,6 +39,6 @@
     "url": "git+https://github.com/ThingsIDoForLove/elaan-js.git",
     "directory": "svelte"
   },
-  "homepage": "https://github.com/ThingsIDoForLove/elaan-js/tree/main/svelte#readme",
+  "homepage": "https://elaan.io/docs/svelte.html",
   "bugs": "https://github.com/ThingsIDoForLove/elaan-js/issues"
 }

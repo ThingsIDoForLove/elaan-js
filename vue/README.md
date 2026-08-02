@@ -4,6 +4,8 @@ Drop-in Vue 3 components + composables for [Elaan](https://elaan.io): an in-app
 notification inbox, a notification bell, a preferences center, and push
 device-token registration — backed by your Elaan account.
 
+**Documentation:** [elaan.io/docs/vue.html](https://elaan.io/docs/vue.html)
+
 ```bash
 npm install @elaanio/vue
 ```

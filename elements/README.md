@@ -5,6 +5,8 @@ Framework-agnostic **Web Components** for [Elaan](https://elaan.io):
 HTML or inside any framework (Angular, Vue, Svelte, Rails/Laravel views,
 WordPress…) — no framework dependency, styles encapsulated in shadow DOM.
 
+**Documentation:** [elaan.io/docs/web-components.html](https://elaan.io/docs/web-components.html)
+
 ```bash
 npm install @elaanio/elements
 ```

@@ -1,6 +1,6 @@
 {
   "name": "@elaanio/react-native",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "React Native components + hooks for Elaan: notification inbox, preferences, and push device-token registration.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -52,6 +52,6 @@
     "url": "git+https://github.com/ThingsIDoForLove/elaan-js.git",
     "directory": "react-native"
   },
-  "homepage": "https://github.com/ThingsIDoForLove/elaan-js/tree/main/react-native#readme",
+  "homepage": "https://elaan.io/docs/react-native.html",
   "bugs": "https://github.com/ThingsIDoForLove/elaan-js/issues"
 }
