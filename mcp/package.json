@@ -1,0 +1,50 @@
+{
+  "name": "@elaanio/mcp",
+  "version": "0.1.0",
+  "description": "Model Context Protocol server for Elaan: create notification types, templates and brands, trigger sends, and debug delivery from an AI coding assistant.",
+  "type": "module",
+  "bin": {
+    "elaan-mcp": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "node test/e2e.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "@types/node": "^22.0.0"
+  },
+  "keywords": [
+    "elaan",
+    "notifications",
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "claude"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThingsIDoForLove/elaan-js.git",
+    "directory": "mcp"
+  },
+  "homepage": "https://elaan.io/docs.html",
+  "bugs": "https://github.com/ThingsIDoForLove/elaan-js/issues",
+  "engines": {
+    "node": ">=18"
+  }
+}
