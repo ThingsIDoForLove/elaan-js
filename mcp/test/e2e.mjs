@@ -138,6 +138,20 @@ if (!authOk || leaked) failed++;
 // stdout must carry only protocol messages; anything else corrupts the session.
 console.log(`  stderr (should be empty):  ${JSON.stringify(stderr.slice(0, 200))}`);
 
+
+// Startup guards: an unset key and an unexpanded ${VAR} must both refuse to
+// start, because Claude Code passes the literal placeholder through when the
+// variable is missing and a truthy-but-bogus key would 401 on every call.
+import { spawnSync } from "node:child_process";
+for (const [label, key] of [["unset", undefined], ["unexpanded ${VAR}", "${ELAAN_API_KEY}"]]) {
+  const env = { ...process.env };
+  if (key === undefined) delete env.ELAAN_API_KEY; else env.ELAAN_API_KEY = key;
+  const r = spawnSync("node", ["dist/index.js"], { cwd: new URL("..", import.meta.url).pathname, env, encoding: "utf8" });
+  const good = r.status === 1 && /console\.elaan\.io/.test(r.stderr) && r.stdout === "";
+  console.log(`  ${good ? "PASS" : "FAIL"}  refuses to start with ${label}`);
+  if (!good) failed++;
+}
+
 child.kill();
 stub.close();
 console.log(failed === 0 ? "\nALL CHECKS PASSED" : `\n${failed} CHECK(S) FAILED`);

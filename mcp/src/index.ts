@@ -26,13 +26,27 @@ import { registerTools } from "./tools.js";
 
 async function main() {
   const apiKey = process.env.ELAAN_API_KEY;
-  if (!apiKey) {
+
+  // An unexpanded `${VAR}` counts as unset. Claude Code's .mcp.json supports
+  // ${ELAAN_API_KEY} expansion, but when the variable is missing it passes the
+  // literal "${ELAAN_API_KEY}" text through rather than an empty string. That
+  // is truthy, so a plain falsy check would start the server and let every
+  // call fail with an unexplained 401 — which is the first thing anyone
+  // installing the plugin would hit.
+  const unexpanded = apiKey !== undefined && /^\$\{[^}]*\}$/.test(apiKey.trim());
+
+  if (!apiKey || unexpanded) {
     // stderr, not stdout: stdout is the MCP transport and anything written
     // there that is not a protocol message breaks the session.
     console.error(
-      "ELAAN_API_KEY is not set.\n\n" +
-        "Create a service key in the Elaan console (console.elaan.io) and pass it\n" +
-        "in the server's env block:\n\n" +
+      (unexpanded
+        ? `ELAAN_API_KEY was passed through unexpanded as "${apiKey}", which means\n` +
+          "the environment variable it refers to is not set.\n\n"
+        : "ELAAN_API_KEY is not set.\n\n") +
+        "Create a service key in the Elaan console (console.elaan.io), then either\n" +
+        "export it before starting your editor:\n\n" +
+        '  export ELAAN_API_KEY="sk_..."\n\n' +
+        "or put the value directly in the server's env block:\n\n" +
         '  "env": { "ELAAN_API_KEY": "sk_..." }\n',
     );
     process.exit(1);
