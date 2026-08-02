@@ -6,6 +6,7 @@ packages:
   - "vue"
   - "svelte"
   - "elements"
+  - "mcp"
 
 # esbuild (via tsup) needs its postinstall to fetch the platform binary.
 allowBuilds:
