@@ -4,6 +4,8 @@ Drop-in React components + hooks for [Elaan](https://elaan.io): an in-app
 notification inbox, a notification bell, a preferences center, and push
 device-token registration — all backed by your Elaan account.
 
+**Documentation:** [elaan.io/docs/react.html](https://elaan.io/docs/react.html)
+
 ```bash
 npm install @elaanio/react
 ```

@@ -5,6 +5,8 @@ the [`@elaanio/core`](https://www.npmjs.com/package/@elaanio/core) stores. Pure 
 **no DOM and no React Native primitives**, so it's shared by both the web and
 native component packages.
 
+**Documentation:** [elaan.io/docs/headless.html](https://elaan.io/docs/headless.html)
+
 ```bash
 npm install @elaanio/react-core
 ```

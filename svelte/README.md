@@ -4,6 +4,8 @@ Svelte stores for [Elaan](https://elaan.io): a reactive notification inbox,
 unread count, and preference matrix, plus push device-token registration —
 backed by your Elaan account.
 
+**Documentation:** [elaan.io/docs/svelte.html](https://elaan.io/docs/svelte.html)
+
 ```bash
 npm install @elaanio/svelte
 ```

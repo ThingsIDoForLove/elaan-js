@@ -4,6 +4,8 @@ Drop-in **React Native** components + hooks for [Elaan](https://elaan.io): an
 in-app notification inbox, a bell with an unread badge, a preferences center, and
 push device-token registration — backed by your Elaan account.
 
+**Documentation:** [elaan.io/docs/react-native.html](https://elaan.io/docs/react-native.html)
+
 ```bash
 npm install @elaanio/react-native
 ```

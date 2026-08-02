@@ -1,6 +1,6 @@
 {
   "name": "@elaanio/react-core",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "React bindings for @elaanio/core: <ElaanProvider> + hooks. Shared by @elaanio/react (web) and @elaanio/react-native. No UI, no DOM.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -40,6 +40,6 @@
     "url": "git+https://github.com/ThingsIDoForLove/elaan-js.git",
     "directory": "react-core"
   },
-  "homepage": "https://github.com/ThingsIDoForLove/elaan-js/tree/main/react-core#readme",
+  "homepage": "https://elaan.io/docs/headless.html",
   "bugs": "https://github.com/ThingsIDoForLove/elaan-js/issues"
 }
