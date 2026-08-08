@@ -1,6 +1,8 @@
 import { defineConfig } from "tsup";
 export default defineConfig({
-  entry: ["src/index.ts"],
+  // Two entries: the main one must stay free of browser-only imports so React
+  // Native can bundle it. See src/browser-push.ts.
+  entry: ["src/index.ts", "src/browser-push.ts"],
   format: ["esm", "cjs"],
   dts: true,
   sourcemap: true,

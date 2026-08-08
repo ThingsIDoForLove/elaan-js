@@ -69,7 +69,7 @@ import { NotificationBell, NotificationFeed, Preferences } from "@elaanio/vue";
 import { usePush } from "@elaanio/vue";
 
 const { register, unregister } = usePush();
-// provider: "fcm" | "apns" | "expo" | "onesignal" | "webpush"
+// provider: "fcm" | "apns" | "expo" | "onesignal"
 await register(fcmToken, "fcm", "web");
 ```
 

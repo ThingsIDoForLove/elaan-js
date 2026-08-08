@@ -61,8 +61,16 @@ export function usePreferences() {
 export function usePush() {
   const { client } = useElaanContext();
   return {
-    register: (value: string, provider: PushProvider, platform?: Platform) =>
-      client.addPushSubscription(value, provider, platform),
+    // `keys` is required for provider "webpush" (a browser subscription is an
+    // endpoint plus two client keys) and rejected for the others. Dropping it made
+    // every browser registration 422 while the Preferences matrix still offered the
+    // channel.
+    register: (
+      value: string,
+      provider: PushProvider,
+      platform?: Platform,
+      keys?: { auth: string; p256dh: string },
+    ) => client.addPushSubscription(value, provider, platform, keys),
     unregister: (value: string, provider: PushProvider) =>
       client.removePushSubscription(value, provider),
   };

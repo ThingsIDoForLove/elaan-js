@@ -1,6 +1,10 @@
 import { useState } from "react";
-import { Preferences, useBrowserPush, useNotifications } from "@elaanio/react";
-import type { BrowserPushResult } from "@elaanio/core/web-push";
+import {
+  Preferences,
+  useBrowserPush,
+  useNotifications,
+  type BrowserPushResult,
+} from "@elaanio/react";
 import { CONTACT_EXTERNAL_ID, configured } from "./config";
 
 // Served from the origin root, so its scope covers the whole app. Built from
@@ -60,7 +64,11 @@ export function App() {
   const onUnsubscribe = async () => {
     try {
       const removed = await push.unsubscribe();
-      setMessage(removed ? "Unsubscribed." : "This browser wasn't subscribed.");
+      setMessage(
+        removed
+          ? "Unsubscribed."
+          : "Nothing to remove — this browser has no subscription and none was recorded.",
+      );
     } catch (error) {
       setMessage(`Failed: ${(error as Error).message}`);
     }

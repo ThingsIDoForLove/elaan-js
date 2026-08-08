@@ -1,0 +1,38 @@
+name: CI
+
+# Every push and PR. The repo had no such workflow: the only automation was the
+# tag-triggered publish, which runs build + typecheck and no tests — so
+# `core/src/base64url.test.ts`, whose whole reason for existing is that a wrong
+# base64url conversion fails *silently* (a subscription the browser drops, with no
+# error anywhere), never executed on any commit.
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.2.2 # match the repo's pnpm; newer 11.x needs Node >= 22.13
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Everything, examples included: a demo that doesn't compile against the
+      # working tree is a broken demo, and this is the place to find that out.
+      - run: pnpm -r build
+
+      - run: pnpm -r typecheck
+
+      # `-r test` skips packages without a test script, so this stays green as
+      # coverage grows package by package.
+      - run: pnpm -r test

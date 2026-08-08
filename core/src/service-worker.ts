@@ -41,8 +41,12 @@ interface NotificationEventLike {
 interface WindowClientLike {
   readonly url: string;
   focus?(): Promise<unknown>;
+  /** Optional: absent on non-window clients, and on a client this worker does not
+   *  control. Callers must fall back to `openWindow`. */
+  navigate?(url: string): Promise<unknown>;
 }
 interface WorkerScope {
+  readonly location: { href: string };
   registration: {
     showNotification(title: string, options?: NotificationOptions): Promise<void>;
   };
@@ -55,55 +59,62 @@ interface WorkerScope {
   };
 }
 
-/** Keys Elaan reserves inside `data` for the notification's own options.
+/** Where the click-through URL is stashed for the `notificationclick` event.
  *
- * The delivery outbox is channel-agnostic — a rendered title, body and a flat
- * `data` map serves Expo, FCM and Web Push alike — so a web push's icon, badge and
- * click-through URL travel inside `data` under these names rather than as three
- * columns only one channel would populate. The server refuses them as tenant keys
- * (`RESERVED_DATA_KEYS`), so a collision is not possible.
- *
- * Mirrors `outbound_push/core/domain/web_push_options.py`. The prefix is `_`,
- * which no template author writes by accident.
+ * Ours, not the server's: `event.notification.data` is the only thing that
+ * survives from showing a notification to a click on it, so the URL has to ride
+ * inside it. Underscore-prefixed to stay clear of the tenant's own data keys.
  */
-const ICON = "_icon";
-const BADGE = "_badge";
 const URL_KEY = "_url";
 
+/** The JSON body the server transmits.
+ *
+ * Every field is optional because the sender omits what rendered empty. Note the
+ * shape: `icon`/`badge`/`url` are at the **top level**, and `data` holds only the
+ * tenant's own keys.
+ *
+ * That is worth stating because there is a second, similar-looking encoding that
+ * is NOT this one. Inside the delivery outbox those three options travel *inside*
+ * `data` under `_icon`/`_badge`/`_url`, because the outbox row is channel-agnostic
+ * and adding three columns only one channel populates was not worth it. The sender
+ * unpacks them back out before transmitting (`unpack_options` →
+ * `message = dict(options)` in `web_push_sender.py`), so a worker reading the
+ * storage form finds nothing: no icon, no badge, and every click a no-op.
+ */
 export interface ElaanPushPayload {
-  title: string;
+  title?: string;
   body?: string;
+  icon?: string;
+  badge?: string;
+  url?: string;
   data?: Record<string, string>;
 }
 
-/** The notification a payload describes, split from the tenant's own data.
+/** The notification a payload describes, plus where a click should go.
  *
- * Exported so a worker that wants to do something else — badge the tab, post to
- * a client, coalesce with an existing notification — can reuse the unpacking
- * without reimplementing the reserved-key contract.
+ * Exported so a worker that wants to do something else — badge the tab, post to a
+ * client, coalesce with an existing notification — can reuse the unpacking rather
+ * than re-deriving the wire shape.
  */
 export function unpackPush(payload: ElaanPushPayload): {
   title: string;
   options: NotificationOptions;
   url: string | null;
 } {
-  const data = payload.data ?? {};
-  const url = data[URL_KEY] || null;
-  const tenantData: Record<string, string> = {};
-  for (const [key, value] of Object.entries(data)) {
-    if (key !== ICON && key !== BADGE && key !== URL_KEY) tenantData[key] = value;
-  }
+  const url = payload.url || null;
   return {
-    // A title is guaranteed by the server (a web push template cannot be saved
-    // without one), so the fallback is for a hand-rolled sender, not for us.
+    // The server refuses to send a web push whose title rendered empty, so the
+    // fallback is for a hand-rolled sender rather than for us — but a worker that
+    // shows nothing gets the browser's own "updated in the background" notice, so
+    // there has to be one.
     title: payload.title || "Notification",
     options: {
       body: payload.body || "",
-      icon: data[ICON] || undefined,
-      badge: data[BADGE] || undefined,
-      // The click handler needs the URL, and `data` is the only thing that
-      // survives to the `notificationclick` event.
-      data: { ...tenantData, ...(url ? { [URL_KEY]: url } : {}) },
+      icon: payload.icon || undefined,
+      badge: payload.badge || undefined,
+      // The tenant's data, plus the URL under a key of ours so the click handler
+      // can find it.
+      data: { ...(payload.data ?? {}), ...(url ? { [URL_KEY]: url } : {}) },
     },
     url,
   };
@@ -141,8 +152,15 @@ export function handleNotificationClick(event: NotificationEventLike): void {
   const scope = self as unknown as WorkerScope;
   event.notification.close();
   const data = (event.notification.data ?? {}) as Record<string, string>;
-  const target = data[URL_KEY];
-  if (!target) return;
+  const raw = data[URL_KEY];
+  if (!raw) return;
+
+  // Resolved against the worker's own origin, because the template's `url` is
+  // free-form text the server does not require to be absolute. A relative
+  // `/orders/7` would otherwise never equal a WindowClient's absolute url, so
+  // every click opened a duplicate tab — and `openWindow` would resolve it
+  // against the *worker scope*, landing on the wrong path for a nested scope.
+  const target = new URL(raw, scope.location.href).href;
 
   event.waitUntil(
     (async () => {
@@ -153,12 +171,25 @@ export function handleNotificationClick(event: NotificationEventLike): void {
         includeUncontrolled: true,
       });
       for (const client of clientList) {
-        // `client.focus` rather than `"focus" in client`: the `in` form doesn't
-        // narrow an optional method, and focus is genuinely absent on non-window
-        // clients.
-        if (client.url === target && client.focus) {
+        // Compare resolved hrefs, so `https://app.test` matches an open tab at
+        // `https://app.test/`. `client.focus` rather than `"focus" in client`:
+        // the `in` form doesn't narrow an optional method.
+        if (new URL(client.url).href === target && client.focus) {
           await client.focus();
+          // Focus alone would leave a tab sitting on /dashboard on /dashboard,
+          // dropping the notification's destination. Navigate when it isn't
+          // already there — and note `navigate` is optional, so fall through to
+          // openWindow rather than assuming it.
           return;
+        }
+      }
+      // Same-origin tab on a different path: reuse it rather than opening a
+      // duplicate, when the browser lets us.
+      for (const client of clientList) {
+        if (client.navigate && new URL(client.url).origin === new URL(target).origin) {
+          const navigated = await client.navigate(target);
+          if (navigated && client.focus) await client.focus();
+          if (navigated) return;
         }
       }
       await scope.clients.openWindow(target);

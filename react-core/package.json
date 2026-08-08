@@ -11,9 +11,16 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./web-push": {
+      "types": "./dist/browser-push.d.ts",
+      "import": "./dist/browser-push.js",
+      "require": "./dist/browser-push.cjs"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit"
@@ -30,7 +37,13 @@
     "tsup": "^8.0.0",
     "typescript": "^5.4.0"
   },
-  "keywords": ["elaan", "notifications", "react", "hooks", "sdk"],
+  "keywords": [
+    "elaan",
+    "notifications",
+    "react",
+    "hooks",
+    "sdk"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"

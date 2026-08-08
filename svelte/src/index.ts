@@ -62,6 +62,9 @@ export interface ElaanPush {
     value: string,
     provider: PushProvider,
     platform?: Platform,
+    /** Required for provider "webpush" (a browser subscription is an endpoint plus
+     *  two client keys), rejected for the others. */
+    keys?: { auth: string; p256dh: string },
   ): Promise<unknown>;
   unregister(value: string, provider: PushProvider): Promise<unknown>;
 }
@@ -121,8 +124,8 @@ export function createElaan(opts: CreateElaanOptions): Elaan {
       setLanguage: preferences.setLanguage,
     },
     push: {
-      register: (value, provider, platform) =>
-        client.addPushSubscription(value, provider, platform),
+      register: (value, provider, platform, keys) =>
+        client.addPushSubscription(value, provider, platform, keys),
       unregister: (value, provider) =>
         client.removePushSubscription(value, provider),
     },

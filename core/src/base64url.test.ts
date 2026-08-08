@@ -67,9 +67,14 @@ describe("bytesToBase64Url", () => {
 
   it("handles a buffer large enough to break argument spreading", () => {
     // Not a real key size, but the chunked loop exists so this cannot become an
-    // intermittent, size-dependent failure later.
-    const big = new Uint8Array(200_000);
+    // intermittent, size-dependent failure later. 100k is ~3 chunks at CHUNK
+    // 0x8000, and well past the ~65k argument limit a spread would hit.
+    const big = new Uint8Array(100_000);
     for (let i = 0; i < big.length; i += 1) big[i] = i % 256;
-    expect(base64UrlToBytes(bytesToBase64Url(big.buffer))).toEqual(big);
+    const round = base64UrlToBytes(bytesToBase64Url(big.buffer));
+    // Compared by hand rather than with toEqual: a deep-equal over 100k elements
+    // takes seconds and made this the slowest test in the suite by 20x.
+    expect(round.length).toBe(big.length);
+    expect(round.every((byte, i) => byte === big[i])).toBe(true);
   });
 });

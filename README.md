@@ -134,18 +134,50 @@ converting the subscription's two keys into what the API stores.
 
 ```tsx
 import { useBrowserPush } from "@elaanio/react";
+import type { BrowserPushResult } from "@elaanio/react";
 
 function PushToggle() {
   const push = useBrowserPush({ serviceWorkerUrl: "/sw.js" });
+  const [note, setNote] = useState<string | null>(null);
   if (!push.supported) return null;
+
+  // Handle the result, and catch: the hook rethrows genuine faults after setting
+  // `push.error`, so passing `push.subscribe` straight to onClick turns one into an
+  // unhandled rejection.
+  const onClick = async () => {
+    try {
+      if (push.subscribed) {
+        setNote((await push.unsubscribe()) ? null : "Nothing to turn off.");
+      } else {
+        setNote(explain(await push.subscribe()));
+      }
+    } catch {
+      setNote(push.error?.message ?? "Something went wrong.");
+    }
+  };
+
   return (
-    <button
-      onClick={push.subscribed ? push.unsubscribe : push.subscribe}
-      disabled={push.busy || push.permission === "denied"}
-    >
-      {push.subscribed ? "Turn off" : "Turn on"} browser notifications
-    </button>
+    <>
+      <button onClick={onClick} disabled={push.busy || push.permission === "denied"}>
+        {push.subscribed ? "Turn off" : "Turn on"} browser notifications
+      </button>
+      {note && <p>{note}</p>}
+    </>
   );
+}
+
+function explain(result: BrowserPushResult): string | null {
+  if (result.ok) return null;
+  switch (result.reason) {
+    case "denied":
+      return "Notifications are blocked for this site. Change it in site settings — the browser won't ask again.";
+    case "dismissed":
+      return "No problem — you can turn these on any time.";
+    case "not-configured":
+      return "Browser notifications aren't set up for this account yet.";
+    case "unsupported":
+      return "This browser can't do notifications.";
+  }
 }
 ```
 
@@ -165,9 +197,15 @@ self.addEventListener("push", handlePush);
 self.addEventListener("notificationclick", handleNotificationClick);
 ```
 
-The account needs a VAPID keypair (Push Transport in the console) and a browser
-push template for the type; without either, `subscribe()` returns
-`not-configured` rather than prompting for a permission it couldn't use.
+The account needs a VAPID keypair (Push Transport in the console). Without one
+`subscribe()` returns `not-configured` — the SDK checks before it prompts, so a
+one-shot permission isn't spent on an account that can't send.
+
+It also needs a **browser push template** for each notification type you send, but
+the SDK cannot check that and does not claim to: subscribing succeeds and the sends
+then fail server-side with "no resolvable template". If notifications never arrive
+for a browser that reports itself subscribed, that is the first thing to check —
+the delivery log in the console names it directly.
 
 A runnable version of all of this is in
 [`examples/web-push-demo`](./examples/web-push-demo).

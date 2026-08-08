@@ -23,7 +23,7 @@ The account needs three things first, all in the console:
    channel with no template can never be delivered on, so the preference matrix
    shows it as unreachable and a send fails with "no resolvable template".
 
-Then a contact whose `external_id` matches `VITE_ELAAN_CONTACT_EXTERNAL_ID`.
+Then a contact whose `external_id` matches `ELAAN_CONTACT_EXTERNAL_ID`.
 Contact creation is tenant-only, so create it via the console or the API.
 
 ```sh
