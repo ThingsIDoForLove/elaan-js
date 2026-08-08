@@ -90,7 +90,9 @@ import {
 import { usePush } from "@elaanio/react-native";
 
 const { register, unregister } = usePush();
-// provider: "expo" | "fcm" | "apns" | "onesignal" | "webpush"
+// provider: "expo" | "fcm" | "apns" | "onesignal"
+    // For browser push use useBrowserPush (@elaanio/react) — a browser
+    // subscription needs two client keys, not just a token.
 await register(expoPushToken, "expo", "ios"); // platform: "ios" | "android" | "web"
 ```
 

@@ -200,14 +200,30 @@ export class ElaanClient {
   }
 
   // --- push device tokens ---
+  /**
+   * Register a push destination.
+   *
+   * `value` is a device token for the mobile providers and the subscription
+   * *endpoint* for `webpush`, where `keys` carries the browser's two client keys
+   * (required there, rejected elsewhere). They go on the wire flat —
+   * `{value, provider, platform?, auth?, p256dh?}` — because the API's DTO serves
+   * every provider and a nested `keys` object would be dead weight on the four
+   * that address a plain token. Accepted here as a nested object anyway, since
+   * that is the shape `PushSubscription.toJSON()` hands you.
+   *
+   * Re-registering the same (provider, value) *replaces* the keys rather than
+   * being ignored, which is what makes re-subscribing after a VAPID rotation
+   * work instead of leaving keys that silently fail to decrypt.
+   */
   async addPushSubscription(
     value: string,
     provider: PushProvider,
     platform?: Platform,
+    keys?: { auth: string; p256dh: string },
   ): Promise<unknown> {
     return this.request(`${await this.base()}/push-subscriptions`, {
       method: "POST",
-      body: { value, provider, platform },
+      body: { value, provider, platform, ...keys },
     });
   }
   async removePushSubscription(
@@ -218,6 +234,21 @@ export class ElaanClient {
     return this.request(`${await this.base()}/push-subscriptions${q}`, {
       method: "DELETE",
     });
+  }
+
+  /**
+   * The account's VAPID public key, for `pushManager.subscribe()`.
+   *
+   * Not contact-scoped — it asks what key this account publishes, which needs no
+   * contact in the path — but it is served to a contact token, and it is the one
+   * read on the account's push transports that is. Throws `ElaanError` with a 404
+   * when the account has no Web Push transport, i.e. browser push isn't set up.
+   */
+  async getWebPushPublicKey(): Promise<string> {
+    const { public_key } = await this.request<{ public_key: string }>(
+      "/web-push/public-key",
+    );
+    return public_key;
   }
 
   // The bare values a raw SSE client needs. Call `await client.ready()` first —

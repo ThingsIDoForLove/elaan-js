@@ -7,6 +7,11 @@ packages:
   - "svelte"
   - "elements"
   - "mcp"
+  # Runnable demos, each `private: true` so `pnpm -r publish` can't ship one.
+  # In the workspace so they consume `workspace:*` and therefore exercise the
+  # working tree — a demo pinned to the published version would keep passing
+  # while the thing it demonstrates was broken.
+  - "examples/*"
 
 # esbuild (via tsup) needs its postinstall to fetch the platform binary.
 allowBuilds:

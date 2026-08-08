@@ -101,7 +101,7 @@ export const elaan = createElaan({
 ```ts
 import { elaan } from "./elaan";
 
-// provider: "fcm" | "apns" | "expo" | "onesignal" | "webpush"
+// provider: "fcm" | "apns" | "expo" | "onesignal"
 await elaan.push.register(fcmToken, "fcm", "web");
 ```
 

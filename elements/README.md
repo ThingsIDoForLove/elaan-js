@@ -104,7 +104,7 @@ Use the exposed client:
 import { getElaanController } from "@elaanio/elements";
 
 const c = getElaanController();
-// provider: "fcm" | "apns" | "expo" | "onesignal" | "webpush"
+// provider: "fcm" | "apns" | "expo" | "onesignal"
 await c?.client.addPushSubscription(fcmToken, "fcm", "web");
 ```
 

@@ -31,13 +31,22 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm -r build
+      # `--filter '!./examples/*'` on all three: examples joined the workspace so
+      # they'd consume workspace:* and break when the packages break, but that also
+      # put them on the release critical path — a stray unused import in a demo
+      # would fail the build *after* the version tag was pushed and block publishing
+      # every SDK package. Their gate is ci.yml, which runs before a tag exists.
+      - run: pnpm -r --filter '!./examples/*' build
 
-      - run: pnpm -r typecheck
+      - run: pnpm -r --filter '!./examples/*' typecheck
+
+      # Tests too, so a release cannot ship a silent base64url regression even if
+      # someone tags without a green CI run.
+      - run: pnpm -r --filter '!./examples/*' test
 
       # Publishes @elaanio/core → react-core → react/react-native in dependency
       # order, rewriting workspace:* to real versions. --no-git-checks because the
       # tag checkout is detached; access comes from each package's publishConfig.
-      - run: pnpm -r publish --no-git-checks --provenance
+      - run: pnpm -r --filter '!./examples/*' publish --no-git-checks --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

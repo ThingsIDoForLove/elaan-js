@@ -108,3 +108,14 @@ polling, or supply their own.
 ## License
 
 MIT
+
+## Entry points
+
+`@elaanio/core` has three, because two of them touch browser-only globals and must
+not be reachable from a React Native bundle:
+
+| Import | For |
+|---|---|
+| `@elaanio/core` | The client, stores and types. Works anywhere. |
+| `@elaanio/core/web-push` | Browser push: `subscribeToBrowserPush`, `unsubscribeFromBrowserPush`, `browserPushSupported`, `prefetchWebPushKey`. Browser only. |
+| `@elaanio/core/service-worker` | `handlePush` / `handleNotificationClick`, for your own service worker. |

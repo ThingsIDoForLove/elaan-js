@@ -96,3 +96,32 @@ worked examples.
 ## License
 
 MIT
+
+## Browser push
+
+`useBrowserPush` owns the whole browser handshake — permission, service worker,
+`subscribe()`, and the key conversions — because unlike a device token there is
+nothing for you to pass in.
+
+```tsx
+import { useBrowserPush } from "@elaanio/react-core/web-push";
+
+const push = useBrowserPush({ serviceWorkerUrl: "/sw.js" });
+const result = await push.subscribe(); // {ok} | {ok:false, reason}
+```
+
+`subscribe()` resolves to a result rather than throwing: `unsupported`, `denied`,
+`dismissed` and `not-configured` are states to render, not errors. `denied` is
+terminal — the browser will not prompt again.
+
+Your service worker must show the notification, or the browser substitutes its own
+"site has been updated in the background" notice:
+
+```js
+import { handlePush, handleNotificationClick } from "@elaanio/core/service-worker";
+self.addEventListener("push", handlePush);
+self.addEventListener("notificationclick", handleNotificationClick);
+```
+
+Full walkthrough and a runnable demo in the
+[root README](../README.md#browser-push-the-web_push-channel).

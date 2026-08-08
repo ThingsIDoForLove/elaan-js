@@ -11,7 +11,7 @@ their own repos (`elaan-swift`, `elaan-kotlin`).
 | Package | What it is | Registry |
 |---|---|---|
 | [`@elaanio/core`](./core) | Framework-agnostic foundation — API client, types, observable inbox/preferences stores, and a realtime-transport interface. No UI, no framework. | npm |
-| [`@elaanio/react-core`](./react-core) | React bindings only (no DOM) — `ElaanProvider` + hooks (`useNotifications`, `useUnreadCount`, `usePreferences`, `usePush`) over the core stores. Shared by web and native. | npm |
+| [`@elaanio/react-core`](./react-core) | React bindings only (no DOM) — `ElaanProvider` + hooks (`useNotifications`, `useUnreadCount`, `usePreferences`, `usePush`, `useBrowserPush`) over the core stores. Shared by web and native. | npm |
 | [`@elaanio/react`](./react) | React (web) components — notification bell, feed, and preferences UI, plus real-time updates over SSE-on-fetch. | npm |
 | [`@elaanio/react-native`](./react-native) | React Native components over the same hooks; realtime over SSE (`react-native-sse`) with polling fallback. | npm |
 | [`@elaanio/vue`](./vue) | Vue 3 components + composables — bell, feed, and preferences, with fetch-SSE realtime. | npm |
@@ -116,11 +116,99 @@ import { usePush } from "@elaanio/react-native";
 function useRegisterPush(expoToken: string) {
   const { register } = usePush();
   useEffect(() => {
-    // provider: "expo" | "fcm" | "apns" | "onesignal" | "webpush"
+    // provider: "expo" | "fcm" | "apns" | "onesignal"
     register(expoToken, "expo", "ios");
   }, [expoToken]);
 }
 ```
+
+### Browser push (the `web_push` channel)
+
+A separate channel from mobile push, not a provider under it — a contact's opt-out
+is keyed by `(type, channel)`, so "no browser nags, keep my phone alerts" has to be
+expressible.
+
+There is no token to hand in here, only a handshake to perform, so `useBrowserPush`
+does the whole thing: permission, service worker registration, `subscribe()`, and
+converting the subscription's two keys into what the API stores.
+
+```tsx
+import { useBrowserPush } from "@elaanio/react";
+import type { BrowserPushResult } from "@elaanio/react";
+
+function PushToggle() {
+  const push = useBrowserPush({ serviceWorkerUrl: "/sw.js" });
+  const [note, setNote] = useState<string | null>(null);
+  if (!push.supported) return null;
+
+  // Handle the result, and catch: the hook rethrows genuine faults after setting
+  // `push.error`, so passing `push.subscribe` straight to onClick turns one into an
+  // unhandled rejection.
+  const onClick = async () => {
+    try {
+      if (push.subscribed) {
+        setNote((await push.unsubscribe()) ? null : "Nothing to turn off.");
+      } else {
+        setNote(explain(await push.subscribe()));
+      }
+    } catch {
+      setNote(push.error?.message ?? "Something went wrong.");
+    }
+  };
+
+  return (
+    <>
+      <button onClick={onClick} disabled={push.busy || push.permission === "denied"}>
+        {push.subscribed ? "Turn off" : "Turn on"} browser notifications
+      </button>
+      {note && <p>{note}</p>}
+    </>
+  );
+}
+
+function explain(result: BrowserPushResult): string | null {
+  if (result.ok) return null;
+  switch (result.reason) {
+    case "denied":
+      return "Notifications are blocked for this site. Change it in site settings — the browser won't ask again.";
+    case "dismissed":
+      return "No problem — you can turn these on any time.";
+    case "not-configured":
+      return "Browser notifications aren't set up for this account yet.";
+    case "unsupported":
+      return "This browser can't do notifications.";
+  }
+}
+```
+
+`subscribe()` resolves to a result rather than throwing, because the failures are
+states to render: `unsupported`, `denied`, `dismissed`, `not-configured`. `denied`
+is the one to handle deliberately — the browser will not prompt again, so the only
+way forward is site settings.
+
+Your service worker must show the notification. If it doesn't, the browser
+substitutes its own "site has been updated in the background" notice:
+
+```js
+// sw.js — bundle this; a classic service worker can't `import`.
+import { handlePush, handleNotificationClick } from "@elaanio/core/service-worker";
+
+self.addEventListener("push", handlePush);
+self.addEventListener("notificationclick", handleNotificationClick);
+```
+
+The account needs a VAPID keypair (Push Transport in the console). Without one
+`subscribe()` returns `not-configured` — the SDK checks before it prompts, so a
+one-shot permission isn't spent on an account that can't send.
+
+It also needs a **browser push template** for each notification type you send, but
+the SDK cannot check that and does not claim to: subscribing succeeds and the sends
+then fail server-side with "no resolvable template". If notifications never arrive
+for a browser that reports itself subscribed, that is the first thing to check —
+the delivery log in the console names it directly.
+
+A runnable version of all of this is in
+[`examples/web-push-demo`](./examples/web-push-demo).
 
 ## Theming & styling
 

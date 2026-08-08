@@ -57,12 +57,21 @@ export function usePreferences() {
   };
 }
 
-/** Register / remove a device token for push. */
+/** Register / remove a device token for push.
+ *
+ * A pass-through: the app obtains the token itself (expo-notifications,
+ * firebase-messaging) and hands it over. For *browser* push use
+ * `useBrowserPush`, which does the obtaining too — there is no equivalent of a
+ * token to be handed in, only a handshake to be performed. */
 export function usePush() {
   const { client } = useElaanContext();
   const register = useCallback(
-    (value: string, provider: PushProvider, platform?: Platform) =>
-      client.addPushSubscription(value, provider, platform),
+    (
+      value: string,
+      provider: PushProvider,
+      platform?: Platform,
+      keys?: { auth: string; p256dh: string },
+    ) => client.addPushSubscription(value, provider, platform, keys),
     [client],
   );
   const unregister = useCallback(
