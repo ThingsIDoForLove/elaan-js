@@ -1,6 +1,17 @@
 // Wire types — mirror the Elaan contact-facing API. No framework deps.
 
-export type Channel = "email" | "inbox" | "push";
+/** A delivery channel.
+ *
+ * `push` is a *mobile* push (Expo, FCM, APNs) and `web_push` is a browser
+ * notification — separate channels, not one channel with two providers, because
+ * a contact's opt-out is keyed by (type, channel): sharing one would make "no
+ * browser nags, keep my phone alerts" inexpressible. They also read different
+ * halves of `push_subscriptions`, partitioned by provider.
+ *
+ * `web_push` was missing here while the API already returned it from
+ * `GET /v1/contacts/{id}/preferences`, so the type contradicted the wire and a
+ * consumer could not name the channel it was being told about. */
+export type Channel = "email" | "inbox" | "push" | "web_push";
 
 export type PushProvider = "fcm" | "apns" | "expo" | "onesignal" | "webpush";
 export type Platform = "ios" | "android" | "web";

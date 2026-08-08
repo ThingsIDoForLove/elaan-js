@@ -1,10 +1,15 @@
 import { usePreferences } from "@elaanio/react-core";
 import type { Channel } from "@elaanio/react-core";
 
+// Both push channels say which surface they mean. "Push" alone was unambiguous
+// until browsers arrived; a contact who has the app AND the site has no other way
+// to tell the two toggles apart, and they are separate channels precisely so the
+// two can be set independently.
 const CHANNEL_LABELS: Record<Channel, string> = {
   email: "Email",
   inbox: "In-app",
-  push: "Push",
+  push: "Mobile push",
+  web_push: "Browser push",
 };
 
 export interface PreferencesProps {

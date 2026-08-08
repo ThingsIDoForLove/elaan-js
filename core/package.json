@@ -1,6 +1,6 @@
 {
   "name": "@elaanio/core",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Framework-agnostic core for Elaan: API client, observable inbox/preferences stores, and realtime transport. The base every framework SDK builds on.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -11,17 +11,29 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./web-push": {
+      "types": "./dist/web-push.d.ts",
+      "import": "./dist/web-push.js",
+      "require": "./dist/web-push.cjs"
+    },
+    "./service-worker": {
+      "types": "./dist/service-worker.d.ts",
+      "import": "./dist/service-worker.js",
+      "require": "./dist/service-worker.cjs"
     }
   },
   "files": ["dist"],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "devDependencies": {
     "tsup": "^8.0.0",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "vitest": "^3.0.0"
   },
   "keywords": ["elaan", "notifications", "sdk", "core"],
   "license": "MIT",

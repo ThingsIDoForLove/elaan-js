@@ -1,0 +1,17 @@
+{
+  // The service worker is a different runtime from the app, so it gets its own
+  // program: `WebWorker` instead of `DOM`. The two libs redeclare overlapping
+  // globals, so they cannot be combined — which is also why @elaanio/core declares
+  // narrow structural types for the worker surface rather than shipping either lib.
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "WebWorker"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/sw.ts"]
+}

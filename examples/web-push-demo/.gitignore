@@ -1,0 +1,6 @@
+# The tenant key lives here. Never commit it.
+.env.local
+
+# Built from src/sw.ts by `pnpm build:sw`; regenerated on every dev/build.
+public/sw.js
+public/sw.js.map

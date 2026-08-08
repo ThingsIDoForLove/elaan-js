@@ -377,10 +377,16 @@ export class ElaanBellElement extends ElaanElement {
   }
 }
 
+// Keyed by `string`, not `Channel`, so the lookup below can fall back for a
+// channel the API gains before this package does. That fallback prints the wire
+// key — "web_push", underscore and all — to an end user, so a channel we DO know
+// about belongs here. Both push channels say which surface they mean: a contact
+// with the app and the site has no other way to tell the two toggles apart.
 const CHANNEL_LABELS: Record<string, string> = {
   email: "Email",
   inbox: "In-app",
-  push: "Push",
+  push: "Mobile push",
+  web_push: "Browser push",
 };
 
 interface PrefToggle {

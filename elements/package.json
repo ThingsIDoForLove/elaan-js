@@ -1,6 +1,6 @@
 {
   "name": "@elaanio/elements",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Framework-agnostic Web Components for Elaan: <elaan-bell>, <elaan-feed>, <elaan-preferences>. Works in any page or framework.",
   "type": "module",
   "main": "./dist/index.cjs",
