@@ -92,8 +92,10 @@ Available composables: `useNotifications`, `useUnreadCount`, `usePreferences`,
 
 ## Theming
 
-Override the CSS variables on `:root` (or any ancestor). The default theme adapts
-to light/dark via `prefers-color-scheme`; see the
+Override the CSS variables on `:root` (or any ancestor). Dark mode follows
+`prefers-color-scheme` by default, and a `dark` class or `data-theme="dark"` on
+any ancestor switches it too, so an app with its own theme toggle drives the
+components. See the
 [repo README](https://github.com/ThingsIDoForLove/elaan-js#theming--styling) for
 the full variable list.
 
@@ -103,6 +105,11 @@ the full variable list.
   --elaan-radius: 6px;
 }
 ```
+
+Components pass `class` through to their root element in the usual Vue way, so
+you can scope those variables to a subtree rather than `:root`. The stylesheet
+is wrapped in `@layer elaan`, so your own unlayered rules beat it without
+needing higher specificity.
 
 ## License
 

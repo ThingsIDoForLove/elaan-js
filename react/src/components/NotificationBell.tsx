@@ -4,8 +4,19 @@ import { NotificationFeed, type NotificationFeedProps } from "./NotificationFeed
 
 export interface NotificationBellProps extends NotificationFeedProps {}
 
-/** A bell icon with an unread badge that opens a popover of the inbox feed. */
-export function NotificationBell(props: NotificationBellProps) {
+/**
+ * A bell icon with an unread badge that opens a popover of the inbox feed.
+ *
+ * `className` and any other DOM attributes land on the outer wrapper, not on
+ * the feed inside the popover: scoping a theme means putting the variables on
+ * an ancestor of the whole thing, badge included.
+ */
+export function NotificationBell({
+  emptyText,
+  onNotificationClick,
+  className,
+  ...rest
+}: NotificationBellProps) {
   const unread = useUnreadCount();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -27,7 +38,13 @@ export function NotificationBell(props: NotificationBellProps) {
   }, [open]);
 
   return (
-    <div className="elaan-bell-wrap" ref={wrapRef}>
+    <div
+      {...rest}
+      className={
+        className ? `elaan-bell-wrap ${className}` : "elaan-bell-wrap"
+      }
+      ref={wrapRef}
+    >
       <button
         type="button"
         className="elaan-bell"
@@ -53,7 +70,10 @@ export function NotificationBell(props: NotificationBellProps) {
       </button>
       {open && (
         <div className="elaan-popover" role="dialog" aria-label="Notifications">
-          <NotificationFeed {...props} />
+          <NotificationFeed
+            emptyText={emptyText}
+            onNotificationClick={onNotificationClick}
+          />
         </div>
       )}
     </div>

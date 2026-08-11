@@ -17,13 +17,22 @@ export const NotificationFeed = defineComponent({
     const { notifications, loading, unreadCount, markRead, markAllRead, remove } =
       useNotifications();
 
+    const open = (n: ElaanNotification) => {
+      if (!n.is_read) void markRead(n.id);
+      props.onNotificationClick?.(n);
+    };
+
     return () => {
       const head = h("div", { class: "elaan-feed-head" }, [
         h("span", { class: "elaan-feed-title" }, "Notifications"),
         unreadCount.value > 0
           ? h(
               "button",
-              { class: "elaan-link", onClick: () => void markAllRead() },
+              {
+                type: "button",
+                class: "elaan-link",
+                onClick: () => void markAllRead(),
+              },
               "Mark all read",
             )
           : null,
@@ -44,21 +53,40 @@ export const NotificationFeed = defineComponent({
               {
                 key: n.id,
                 class: n.is_read ? "elaan-item" : "elaan-item elaan-unread",
-                onClick: () => {
-                  if (!n.is_read) void markRead(n.id);
-                  props.onNotificationClick?.(n);
-                },
+                "data-unread": n.is_read ? undefined : "",
+                onClick: () => open(n),
               },
               [
-                h("span", { class: "elaan-status", "aria-hidden": "true" }),
-                h("div", { class: "elaan-item-main" }, [
-                  h("div", { class: "elaan-item-title" }, n.title),
-                  n.body ? h("div", { class: "elaan-item-body" }, n.body) : null,
-                  h("div", { class: "elaan-item-time" }, timeAgo(n.created_at)),
-                ]),
+                h("span", {
+                  class: "elaan-unread-dot elaan-status",
+                  "aria-hidden": "true",
+                }),
+                // The activatable region is the content, so the delete button
+                // is its sibling rather than a button nested inside something
+                // with a button role. A keydown on a div does not synthesize a
+                // click, so this calls open() itself.
+                h(
+                  "div",
+                  {
+                    class: "elaan-item-main",
+                    role: "button",
+                    tabindex: 0,
+                    onKeydown: (e: KeyboardEvent) => {
+                      if (e.key !== "Enter" && e.key !== " ") return;
+                      e.preventDefault();
+                      open(n);
+                    },
+                  },
+                  [
+                    h("div", { class: "elaan-item-title" }, n.title),
+                    n.body ? h("div", { class: "elaan-item-body" }, n.body) : null,
+                    h("div", { class: "elaan-item-time" }, timeAgo(n.created_at)),
+                  ],
+                ),
                 h(
                   "button",
                   {
+                    type: "button",
                     class: "elaan-item-del",
                     "aria-label": "Delete notification",
                     onClick: (e: MouseEvent) => {
