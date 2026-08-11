@@ -17,7 +17,7 @@
   "files": ["dist"],
   "sideEffects": ["*.css"],
   "scripts": {
-    "build": "tsup && cp src/styles.css dist/styles.css",
+    "build": "tsup && cp ../styles/elaan.css dist/styles.css",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit"
   },

@@ -16,13 +16,25 @@ export const CSS = `
   --_danger: var(--elaan-danger, #ef4444);
   --_radius: var(--elaan-radius, 10px);
   --_shadow: var(--elaan-shadow, 0 12px 32px -12px rgba(0, 0, 0, 0.3));
+  --_font: var(--elaan-font, inherit);
+  --_z: var(--elaan-z, 1000);
   /* Block by default so <elaan-feed>/<elaan-preferences> fill their container;
      only the bell is an inline control. */
   display: block;
   color: var(--_text);
-  font: 14px/1.5 system-ui, -apple-system, sans-serif;
+  /* Longhand, not the font shorthand: the shorthand also resets font-family,
+     and font-family inherits through the shadow boundary, so the shorthand
+     silently opted out of the host app's type stack. Unset, --_font resolves
+     to inherit and the host's stack is adopted; name a stack in --elaan-font
+     to pin one. */
+  font-family: var(--_font);
+  font-size: 14px;
+  line-height: 1.5;
 }
 :host(elaan-bell) { display: inline-block; }
+/* --_danger and --_shadow belong here too: a drop shadow tuned for a white
+   page is close to invisible against a dark surface, so the popover loses its
+   separation from what is behind it. */
 @media (prefers-color-scheme: dark) {
   :host {
     --_bg: var(--elaan-bg, #12151d);
@@ -30,6 +42,8 @@ export const CSS = `
     --_text: var(--elaan-text, #e8eaf0);
     --_muted: var(--elaan-muted, #8b93a3);
     --_border: var(--elaan-border, #262c38);
+    --_danger: var(--elaan-danger, #f87171);
+    --_shadow: var(--elaan-shadow, 0 12px 32px -12px rgba(0, 0, 0, 0.75));
   }
 }
 * { box-sizing: border-box; }
@@ -61,7 +75,9 @@ export const CSS = `
   min-width: 16px;
   height: 16px;
   padding: 0 4px;
-  font: 600 10px/16px system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 16px;
   text-align: center;
   color: var(--_accent-ink);
   background: var(--_accent);
@@ -72,7 +88,7 @@ export const CSS = `
   position: absolute;
   right: 0;
   top: calc(100% + 8px);
-  z-index: 1000;
+  z-index: var(--_z);
   width: 360px;
   max-width: 92vw;
   background: var(--_bg);
@@ -113,10 +129,15 @@ export const CSS = `
   cursor: pointer;
 }
 .elaan-item:hover { background: var(--_bg-hover); }
+.elaan-unread-dot,
 .elaan-status { flex: none; width: 8px; height: 8px; margin-top: 6px; border-radius: 50%; background: transparent; }
+.elaan-item[data-unread] .elaan-unread-dot,
+.elaan-item.elaan-unread .elaan-unread-dot,
+.elaan-item[data-unread] .elaan-status,
 .elaan-item.elaan-unread .elaan-status { background: var(--_accent); }
-.elaan-item-main { flex: 1; min-width: 0; }
+.elaan-item-main { flex: 1; min-width: 0; outline-offset: -2px; }
 .elaan-item-title { font-weight: 600; }
+.elaan-item[data-unread] .elaan-item-title,
 .elaan-item.elaan-unread .elaan-item-title { font-weight: 700; }
 .elaan-item-body { color: var(--_muted); font-size: 0.88rem; margin-top: 2px; }
 .elaan-item-time { color: var(--_muted); font-size: 0.75rem; margin-top: 4px; }
@@ -134,7 +155,12 @@ export const CSS = `
   cursor: pointer;
   opacity: 0;
 }
-.elaan-item:hover .elaan-item-del { opacity: 1; }
+/* Revealed on focus as well as hover: without this a keyboard user tabs
+   onto an invisible button and the next Enter deletes a notification with
+   no visible cause. */
+.elaan-item:hover .elaan-item-del,
+.elaan-item:focus-within .elaan-item-del,
+.elaan-item-del:focus-visible { opacity: 1; }
 .elaan-item-del:hover { color: var(--_danger); background: var(--_bg-hover); }
 
 .elaan-prefs { display: flex; flex-direction: column; gap: 0.5rem; }

@@ -107,7 +107,30 @@ Override the CSS variables on `:root` (or any ancestor):
 }
 ```
 
-The default theme adapts to light/dark via `prefers-color-scheme`.
+Tokens: `--elaan-accent`, `--elaan-accent-ink`, `--elaan-bg`,
+`--elaan-bg-hover`, `--elaan-text`, `--elaan-muted`, `--elaan-border`,
+`--elaan-danger`, `--elaan-radius`, `--elaan-shadow`, `--elaan-font`,
+`--elaan-z`.
+
+`--elaan-font` is unset by default, so the components inherit your app's
+type stack. Name a stack in it to pin one instead. Note that setting it to
+`inherit` does not do what it looks like: a CSS-wide keyword in a custom
+property declaration applies to the variable, so it would just take the
+parent's `--elaan-font`.
+
+Every component takes `className` and any other DOM attribute on its root
+element, so you can scope those variables to a subtree rather than `:root`:
+
+```tsx
+<NotificationBell className={styles.scope} />
+```
+
+Dark mode follows `prefers-color-scheme` by default, and a `dark` class or
+`data-theme="dark"` on any ancestor switches it too, so an app with its own
+theme toggle drives the components without redeclaring the palette.
+
+The stylesheet is wrapped in `@layer elaan`, so your own unlayered rules beat
+it without needing higher specificity.
 
 ## Browser push
 

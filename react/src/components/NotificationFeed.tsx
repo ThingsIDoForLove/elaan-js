@@ -1,3 +1,4 @@
+import type { HTMLAttributes } from "react";
 import { useNotifications } from "@elaanio/react-core";
 import type { ElaanNotification } from "@elaanio/react-core";
 
@@ -15,7 +16,8 @@ function timeAgo(iso: string): string {
   return new Date(iso).toLocaleDateString();
 }
 
-export interface NotificationFeedProps {
+export interface NotificationFeedProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "onClick"> {
   emptyText?: string;
   onNotificationClick?: (n: ElaanNotification) => void;
 }
@@ -24,16 +26,30 @@ export interface NotificationFeedProps {
 export function NotificationFeed({
   emptyText = "You're all caught up.",
   onNotificationClick,
+  className,
+  ...rest
 }: NotificationFeedProps) {
   const { notifications, loading, unreadCount, markRead, markAllRead, remove } =
     useNotifications();
 
+  const open = (n: ElaanNotification) => {
+    if (!n.is_read) void markRead(n.id);
+    onNotificationClick?.(n);
+  };
+
   return (
-    <div className="elaan-feed">
+    <div
+      {...rest}
+      className={className ? `elaan-feed ${className}` : "elaan-feed"}
+    >
       <div className="elaan-feed-head">
         <span className="elaan-feed-title">Notifications</span>
         {unreadCount > 0 && (
-          <button className="elaan-link" onClick={() => void markAllRead()}>
+          <button
+            type="button"
+            className="elaan-link"
+            onClick={() => void markAllRead()}
+          >
             Mark all read
           </button>
         )}
@@ -49,18 +65,31 @@ export function NotificationFeed({
             <li
               key={n.id}
               className={n.is_read ? "elaan-item" : "elaan-item elaan-unread"}
-              onClick={() => {
-                if (!n.is_read) void markRead(n.id);
-                onNotificationClick?.(n);
-              }}
+              data-unread={n.is_read ? undefined : ""}
+              onClick={() => open(n)}
             >
-              <span className="elaan-status" aria-hidden="true" />
-              <div className="elaan-item-main">
+              <span className="elaan-unread-dot elaan-status" aria-hidden="true" />
+              {/* The activatable region is the content, not the <li>: the
+                  delete button is then a sibling of it rather than a button
+                  nested inside something with a button role. A keydown on a
+                  div does not synthesize a click, so this calls open() itself
+                  and the <li>'s onClick still handles the mouse. */}
+              <div
+                className="elaan-item-main"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key !== "Enter" && e.key !== " ") return;
+                  e.preventDefault();
+                  open(n);
+                }}
+              >
                 <div className="elaan-item-title">{n.title}</div>
                 {n.body && <div className="elaan-item-body">{n.body}</div>}
                 <div className="elaan-item-time">{timeAgo(n.created_at)}</div>
               </div>
               <button
+                type="button"
                 className="elaan-item-del"
                 aria-label="Delete notification"
                 onClick={(e) => {

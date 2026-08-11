@@ -1,0 +1,289 @@
+/* Elaan default styles, shared by @elaanio/react and @elaanio/vue (each copies
+   this into its own dist/styles.css at build time) and by the class names
+   @elaanio/elements renders into the light DOM.
+
+   Theme by overriding the CSS custom properties below on :root or on any
+   ancestor of the components. Everything else is wrapped in `@layer elaan`, so
+   your own unlayered rules beat ours without needing to out-specify them: the
+   class names are ours to refactor, the variables are the contract.
+
+   Dark mode follows the OS by default and can be driven by the host app
+   instead, with a `dark` class or `data-theme="dark"` on any ancestor. */
+
+:root {
+  --elaan-accent: #45b0ee;
+  --elaan-accent-ink: #ffffff;
+  --elaan-bg: #ffffff;
+  --elaan-bg-hover: #f4f6f9;
+  --elaan-text: #1a1d23;
+  --elaan-muted: #6b7280;
+  --elaan-border: #e5e7eb;
+  --elaan-danger: #ef4444;
+  --elaan-radius: 10px;
+  --elaan-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.3);
+  --elaan-z: 1000;
+  /* --elaan-font is deliberately NOT given a default here. Unset, the
+     components inherit the host app's type stack (see the var() fallback
+     below); set it to a font stack to pin one. It cannot be given a default
+     and then overridden with `inherit`, because a CSS-wide keyword in a custom
+     property declaration applies to the variable itself: `--elaan-font:
+     inherit` means "take the parent's --elaan-font", not "font-family:
+     inherit", so the default would win anyway. */
+}
+
+/* The dark palette, defined once and applied from three places below. Every
+   token the light block sets that dark needs to change belongs here, including
+   --elaan-shadow: a drop shadow tuned for a white page is close to invisible
+   against a dark surface, so the popover loses its separation from the page. */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not([data-theme="light"]) {
+    --elaan-accent: #45b0ee;
+    --elaan-accent-ink: #04121e;
+    --elaan-bg: #12151d;
+    --elaan-bg-hover: #1a1f2a;
+    --elaan-text: #e8eaf0;
+    --elaan-muted: #8b93a3;
+    --elaan-border: #262c38;
+    --elaan-danger: #f87171;
+    --elaan-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.75);
+  }
+}
+
+/* Host-driven dark. Not restricted to :root, because an app that themes a
+   subtree (a per-tenant brand behind a feature flag, say) puts the class on
+   that subtree rather than on <html>. --elaan-radius is deliberately not
+   redefined: a corner radius is a brand decision, not a light/dark one. */
+.dark,
+[data-theme="dark"] {
+  --elaan-accent: #45b0ee;
+  --elaan-accent-ink: #04121e;
+  --elaan-bg: #12151d;
+  --elaan-bg-hover: #1a1f2a;
+  --elaan-text: #e8eaf0;
+  --elaan-muted: #8b93a3;
+  --elaan-border: #262c38;
+  --elaan-danger: #f87171;
+  --elaan-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.75);
+}
+
+@layer elaan {
+  .elaan-bell-wrap {
+    position: relative;
+    display: inline-block;
+  }
+  .elaan-bell {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    color: var(--elaan-text);
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .elaan-bell:hover {
+    background: var(--elaan-bg-hover);
+  }
+  .elaan-bell svg {
+    width: 20px;
+    height: 20px;
+  }
+  .elaan-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 16px;
+    text-align: center;
+    color: var(--elaan-accent-ink);
+    background: var(--elaan-accent);
+    border-radius: 8px;
+  }
+
+  .elaan-popover {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    z-index: var(--elaan-z);
+    width: 360px;
+    max-width: 92vw;
+    background: var(--elaan-bg);
+    color: var(--elaan-text);
+    border: 1px solid var(--elaan-border);
+    border-radius: var(--elaan-radius);
+    box-shadow: var(--elaan-shadow);
+    overflow: hidden;
+  }
+
+  /* font-family/size/line-height rather than the `font` shorthand, which also
+     resets font-family and so overrode the host app's chosen face. The
+     fallback is `inherit`, so unset the components adopt the host's type
+     stack; naming a stack in --elaan-font pins one instead. */
+  .elaan-feed {
+    font-family: var(--elaan-font, inherit);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--elaan-text);
+  }
+  .elaan-feed-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--elaan-border);
+  }
+  .elaan-feed-title {
+    font-weight: 600;
+  }
+  .elaan-link {
+    padding: 0;
+    font: inherit;
+    font-size: 0.8rem;
+    color: var(--elaan-accent);
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  .elaan-empty {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--elaan-muted);
+  }
+  .elaan-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 26rem;
+    overflow-y: auto;
+  }
+  .elaan-item {
+    position: relative;
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--elaan-border);
+    cursor: pointer;
+  }
+  .elaan-item:hover {
+    background: var(--elaan-bg-hover);
+  }
+
+  /* `.elaan-status` is the 8px unread dot. It reads like a status message, so
+     `.elaan-unread-dot` is the name to use; both are rendered and styled until
+     the old one is dropped in a major. Unread state is on the row as
+     `data-unread` as well as `.elaan-unread`, so a consumer can target state
+     without competing on specificity. */
+  .elaan-unread-dot,
+  .elaan-status {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    margin-top: 6px;
+    border-radius: 50%;
+    background: transparent;
+  }
+  .elaan-item[data-unread] .elaan-unread-dot,
+  .elaan-item.elaan-unread .elaan-unread-dot,
+  .elaan-item[data-unread] .elaan-status,
+  .elaan-item.elaan-unread .elaan-status {
+    background: var(--elaan-accent);
+  }
+  .elaan-item-main {
+    flex: 1;
+    min-width: 0;
+    /* The row's keyboard affordance lives here rather than on the <li>, so the
+       delete button is a sibling of the activatable region instead of being
+       nested inside one. */
+    outline-offset: -2px;
+  }
+  .elaan-item-title {
+    font-weight: 600;
+  }
+  .elaan-item[data-unread] .elaan-item-title,
+  .elaan-item.elaan-unread .elaan-item-title {
+    font-weight: 700;
+  }
+  .elaan-item-body {
+    color: var(--elaan-muted);
+    font-size: 0.88rem;
+    margin-top: 2px;
+  }
+  .elaan-item-time {
+    color: var(--elaan-muted);
+    font-size: 0.75rem;
+    margin-top: 4px;
+  }
+  .elaan-item-del {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    font-size: 16px;
+    line-height: 1;
+    color: var(--elaan-muted);
+    background: none;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0;
+  }
+  /* Revealed on focus as well as hover. Without this a keyboard user tabs onto
+     an invisible button, and the next Enter deletes a notification with no
+     visible cause. */
+  .elaan-item:hover .elaan-item-del,
+  .elaan-item:focus-within .elaan-item-del,
+  .elaan-item-del:focus-visible {
+    opacity: 1;
+  }
+  .elaan-item-del:hover {
+    color: var(--elaan-danger);
+    background: var(--elaan-bg-hover);
+  }
+
+  .elaan-prefs {
+    font-family: var(--elaan-font, inherit);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--elaan-text);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .elaan-pref-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--elaan-border);
+    border-radius: var(--elaan-radius);
+  }
+  .elaan-pref-type {
+    font-weight: 600;
+  }
+  .elaan-pref-channels {
+    display: flex;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+  }
+  .elaan-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--elaan-muted);
+    cursor: pointer;
+  }
+  .elaan-toggle input {
+    accent-color: var(--elaan-accent);
+  }
+}

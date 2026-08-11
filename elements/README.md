@@ -83,7 +83,16 @@ the shadow boundary). Light/dark is automatic via `prefers-color-scheme`.
 
 Available tokens: `--elaan-accent`, `--elaan-accent-ink`, `--elaan-bg`,
 `--elaan-bg-hover`, `--elaan-text`, `--elaan-muted`, `--elaan-border`,
-`--elaan-danger`, `--elaan-radius`, `--elaan-shadow`.
+`--elaan-danger`, `--elaan-radius`, `--elaan-shadow`, `--elaan-font`,
+`--elaan-z`.
+
+`--elaan-font` is unset by default, so the components inherit your app's type
+stack (`font-family` inherits through the shadow boundary). Name a stack in it
+to pin one instead.
+
+Driving dark mode from your app's own theme toggle rather than the OS works the
+same way: a shadow root cannot select an ancestor's `dark` class, so declare the
+`--elaan-*` values under your toggle's selector and they inherit in.
 
 `--elaan-accent-ink` is the text colour on top of `--elaan-accent` (the unread
 badge). It defaults to a near-black that reads against the default light-blue
