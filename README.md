@@ -228,13 +228,30 @@ then override the variables on `:root` (or any ancestor of the components):
   --elaan-danger: #ef4444;
   --elaan-radius: 10px;
   --elaan-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.3);
+  --elaan-z: 1000;           /* popover stacking order */
+  /* --elaan-font is unset by default, so the components inherit your
+     app's type stack. Name a stack here to pin one instead. */
 }
 ```
 
-The default theme already adapts to light/dark via `prefers-color-scheme`;
-override the same variables inside your own media query to customize dark mode.
-Each element also carries a stable `elaan-*` class (`.elaan-bell`,
-`.elaan-feed`, `.elaan-item`, …) if you need finer CSS control.
+Every component also takes `className` and any other DOM attribute, applied to
+its root element, so you can scope the variables to a subtree instead of
+`:root`:
+
+```tsx
+<NotificationBell className={styles.scope} />
+```
+
+**Dark mode** follows the OS by default and can be driven by your app instead:
+a `dark` class or `data-theme="dark"` on any ancestor switches the palette, so
+a manual theme toggle (the Tailwind and shadcn default) works without you
+redeclaring the variables. Override the variables inside your own media query
+or under your own selector to customize either palette.
+
+The rules are wrapped in `@layer elaan`, so your own unlayered CSS beats them
+without having to out-specify anything. Each element carries a stable `elaan-*`
+class (`.elaan-bell`, `.elaan-feed`, `.elaan-item`, …), and a row in the feed
+carries `data-unread` while it is unread, if you need finer control.
 
 **React Native (`@elaanio/react-native`)** components use `StyleSheet` with a
 small built-in palette (accent, background, text, muted, border). There are no

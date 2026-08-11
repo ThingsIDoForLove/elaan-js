@@ -172,6 +172,20 @@ export class ElaanFeedElement extends ElaanElement {
         if (!n.is_read) void c.inbox.markRead(id);
       }
     });
+
+    // Keyboard activation of a row. A keydown on a div with role="button" does
+    // not synthesize a click, so this dispatches one on the row and lets the
+    // handler above do the rest.
+    this.container.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const main = (e.target as HTMLElement).closest<HTMLElement>(
+        ".elaan-item-main",
+      );
+      const row = main?.closest<HTMLElement>("[data-action='open']");
+      if (!row) return;
+      e.preventDefault();
+      row.click();
+    });
   }
 
   protected subscribe(c: ElaanController): () => void {
@@ -219,6 +233,7 @@ export class ElaanFeedElement extends ElaanElement {
       }
 
       item.li.classList.toggle("elaan-unread", !n.is_read);
+      item.li.toggleAttribute("data-unread", !n.is_read);
       setText(item.title, n.title);
       const body = n.body ?? "";
       setText(item.body, body);
@@ -248,10 +263,16 @@ export class ElaanFeedElement extends ElaanElement {
     li.dataset.action = "open";
     li.dataset.id = id;
 
-    const status = el("span", "elaan-status");
+    const status = el("span", "elaan-unread-dot elaan-status");
     status.setAttribute("aria-hidden", "true");
 
+    // The keyboard affordance sits on the content rather than the <li>, so the
+    // delete button is its sibling instead of a button nested inside something
+    // with a button role. The delegated click handler still resolves through
+    // the <li>'s own data-action, so a click anywhere on the row opens it.
     const main = el("div", "elaan-item-main");
+    main.setAttribute("role", "button");
+    main.tabIndex = 0;
     const title = el("div", "elaan-item-title");
     const body = el("div", "elaan-item-body");
     const time = el("div", "elaan-item-time");
