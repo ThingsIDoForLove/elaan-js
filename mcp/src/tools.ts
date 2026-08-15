@@ -220,7 +220,7 @@ export function registerTools(server: McpServer, api: ElaanClient) {
     {
       title: "Create a template",
       description:
-        "Create a template for one notification type on one channel. Content uses {{ slot }} placeholders filled at send time from the recipient's contact attributes, the resolved brand's values and the trigger's variables (most specific wins). A slot nobody filled renders empty rather than failing the send. Repeat blocks are supported for list data: {{#each lines}} ... {{ item.field }} ... {{/each}} — unbalanced or nested blocks are rejected at save time. Leave branding_key and language unset for the default variant; a template must exist on a channel for that channel to be offered to contacts at all. Required fields per channel: email needs subject and body; inbox needs title and body; push needs at least one of title, body or data.",
+        "Create a template for one notification type on one channel. Content is Liquid. A value is read from one of three places, and the slot itself says which: {{ contact.first_name }} for the recipient (their attributes, plus contact.email, contact.language, contact.external_id), {{ brand.logo }} for the resolved brand's values, and {{ order_id }} for the trigger's own variables. `contact` and `brand` are reserved, so a variable cannot use either name. A slot nobody filled renders empty rather than failing the send. Loops handle list data: {% for line in lines %} ... {{ line.description }} ... {% endfor %}; conditions and the standard Liquid filters are available too. In an email BODY every interpolated value is HTML-escaped (use `| safe` to pass markup through deliberately); titles, push and inbox text are not. A template that does not parse, or that names a filter that does not exist, is rejected at save time. Leave branding_key and language unset for the default variant; a template must exist on a channel for that channel to be offered to contacts at all. Required fields per channel: email needs subject and body; inbox needs title and body; push needs at least one of title, body or data.",
       inputSchema: {
         channel: z.enum(CHANNELS),
         notification_type_key: z.string(),
@@ -469,7 +469,7 @@ export function registerTools(server: McpServer, api: ElaanClient) {
     {
       title: "Trigger a notification",
       description:
-        "Send a notification to 1-100 recipients. Returns 202 immediately with one event_id per recipient; delivery happens asynchronously, so use get_notification_event afterwards to see the outcome. An omitted or unknown branding_key falls back to the account default rather than failing. Variables may be flat strings or arrays of flat row objects for {{#each}} blocks. This sends real messages.",
+        "Send a notification to 1-100 recipients. Returns 202 immediately with one event_id per recipient; delivery happens asynchronously, so use get_notification_event afterwards to see the outcome. An omitted or unknown branding_key falls back to the account default rather than failing. Variables are any JSON: strings, numbers, booleans, nested objects read as {{ order.customer.name }}, and arrays a template loops over with {% for %}. They fill slots at the TOP level; the recipient and the brand have their own namespaces, so `contact` and `brand` are refused as variable names. This sends real messages.",
       inputSchema: {
         notification_type_key: z.string(),
         external_ids: z
@@ -481,7 +481,9 @@ export function registerTools(server: McpServer, api: ElaanClient) {
         variables: z
           .record(z.string(), z.unknown())
           .optional()
-          .describe("Flat values, or arrays of flat row objects for repeat blocks."),
+          .describe(
+            "Any JSON. Arrays are looped over with {% for %}; nested objects are read as {{ order.customer.name }}. `contact` and `brand` are reserved.",
+          ),
       },
     },
     async (input) => run(() => api.post("/notifications", input)),
